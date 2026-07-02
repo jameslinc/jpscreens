@@ -2143,16 +2143,12 @@ html += '<td style="' + tdStyle + '">';
       escapeAttr(website) +
       '" target="_blank" ' +
       'style="color:#0066ff;text-decoration:underline;font-weight:bold;">' +
-      escapeHtml(
-  "@@@" + String(value || "")
-) +
+      escapeHtml(value) +
       '</a>';
 
   } else {
 
-    html += escapeHtml(
-  "@@@" + String(value || "")
-);
+    html += escapeHtml(value);
 
   }
 
