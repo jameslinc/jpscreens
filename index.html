@@ -1815,14 +1815,7 @@ if (hasWebsite) {
     '<a href="' + escapeAttr(website) + '" ' +
     'target="_blank" ' +
     'style="color:#0066ff;text-decoration:underline;font-weight:bold;font-size:18px;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">' +
-    escapeHtml(
-  (
-    String(row.product_type || "").toLowerCase() === "panel"
-      ? ""
-      : "@@@"
-  ) +
-  String(row.panel_model || "")
-) +
+    escapeHtml(row.panel_model || "") +
     '</a>';
 
 } else {
@@ -1830,14 +1823,7 @@ if (hasWebsite) {
   pnHtml =
     '<a href="javascript:void(0)" onclick="toggleProductDetail(this)" data-index="' + idx + '" ' +
     'style="color:#0066ff;text-decoration:underline;font-weight:bold;font-size:18px;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">' +
-    escapeHtml(
-  (
-    String(row.product_type || "").toLowerCase() === "panel"
-      ? ""
-      : "@@@"
-  ) +
-  String(row.panel_model || "")
-) +
+   escapeHtml(row.panel_model || "") +
     '</a>';
 
 }
