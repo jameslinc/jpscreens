@@ -1119,13 +1119,13 @@ async function sendData() {
       renderOtherProductTypeTables();
 
     } else {
-      msg.style.color = "red";
-      msg.innerText = "Send failed"; // + text;
+  msg.style.color = "red";
+  msg.innerText = "Send failed\n\n" + text;
     }
   } catch (err) {
-    msg.style.color = "red";
-    msg.innerText = "Error"; // + err.message;
-  }
+  msg.style.color = "red";
+  msg.innerText = "Error\n\n" + err.message;
+}
 }
 
 async function loadWebCont() {
