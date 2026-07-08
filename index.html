@@ -888,48 +888,10 @@ width:100%;
     </div>
   </section>
 
-<section id="privacy">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-
-<div class="container" style="
-font-family:'Bebas Neue',sans-serif;
-font-size:12px;
-letter-spacing:3px;
-margin:0 auto;
-text-align:center;
-width:100%;
-">
- 
-
-<h2>プライバシーポリシー</h2>
-
-<p>
-当社は、お客様がRFQ（見積依頼）フォームを通じて送信された
-会社名、ご担当者名、メールアドレス、電話番号、お問い合わせ内容などの
-個人情報を取得する場合があります。
-</p>
-
-<p>
-取得した情報は、お見積りのご提供、
-技術サポート、お客様へのご連絡および
-関連サービスの提供を目的として利用いたします。
-</p>
-
-<p>
-当社は、お客様の個人情報を第三者へ販売、
-貸与または無断で提供することはありません。
-ただし、法令に基づき開示が必要な場合を除きます。
-</p>
-
-<p>
-お客様は、ご自身の個人情報について、
-内容の確認、訂正、更新または削除をご希望の場合、
-当社までお問い合わせいただくことができます。
-</p>
-
-</div>
+<section id="privacy" class="anchor">
+  <div class="container" id="privacyPolicyBox">
+  </div>
 </section>
-```
 
 
 
@@ -1484,7 +1446,13 @@ document.title =
   "";
 
 
-   
+ const privacyBox =
+  document.getElementById("privacyPolicyBox");
+
+if (privacyBox) {
+  privacyBox.innerHTML =
+    d.company_private_policy || "";
+}  
       
 
 
@@ -1521,8 +1489,13 @@ document.title =
 }
 
   } catch (err) {
-    box.innerHTML = "Load company info failed: " + err.message;
+  console.log("Load company info failed:", err);
+
+  if (box) {
+    box.innerHTML =
+      "Load company info failed: " + err.message;
   }
+}
 }function escapeHtml(str) {
   return String(str || "")
     .replaceAll("&", "&amp;")
@@ -3104,15 +3077,44 @@ function getCurrentWebId() {
 
 function showMemberLogin() {
 
-  const keycode =
-    prompt("Input Keycode");
+  const txt = prompt("Input Keycode");
 
-  if (!keycode) return;
+  if (!txt) return;
 
-  const url =
-    "https://editallapi.lcdscreentek.workers.dev/" +
-    "?keycode=" + encodeURIComponent(keycode) +
-    "&web_id=" + encodeURIComponent(getCurrentWebId());
+  let keycode = txt.trim();
+  let section = "";
+
+  if (txt.includes("#")) {
+
+    const arr = txt.split("#");
+
+    keycode = arr[0].trim();
+
+    section =
+      String(arr[1] || "")
+      .trim()
+      .toLowerCase();
+
+  }
+
+  let url;
+
+  if (section) {
+
+    url =
+      "https://section.lcdscreentek.workers.dev/api/web-cont" +
+      "?web_id=" + encodeURIComponent(getCurrentWebId()) +
+      "&keycode=" + encodeURIComponent(keycode) +
+      "&section=" + encodeURIComponent(section);
+
+  } else {
+
+    url =
+      "https://editallapi.lcdscreentek.workers.dev/" +
+      "?web_id=" + encodeURIComponent(getCurrentWebId()) +
+      "&keycode=" + encodeURIComponent(keycode);
+
+  }
 
   location.href = url;
 }
