@@ -1566,7 +1566,14 @@ function renderProductTable() {
 
   const allData = window.panelRows || [];
 
+ if (allData.length === 0) {
+    box.innerHTML =
+      '<div id="otherProductTypeBox" ' +
+      'style="margin-top:22px;margin-bottom:22px;"></div>';
 
+    renderOtherProductTypeTables();
+    return;
+  }
 
 
   const selectedSize = window.productSize || "";
