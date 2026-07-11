@@ -1940,15 +1940,7 @@ if (!allPanelCols.length) {
 
 // TABLE_TITLE 有文字才輸出
 if (panelTableTitle) {
-  html +=
-    '<h2 style="' +
-      'color:#fff;' +
-      'margin:20px 0 12px;' +
-      'font-size:28px;' +
-      'font-weight:700;' +
-    '">' +
-      escapeHtml(panelTableTitle) +
-    '</h2>';
+  html += panelTableTitle;
 }
 
 html += productSizeFilterHtml(selectedSize);
@@ -2469,15 +2461,7 @@ const tableTitle =
 // 有文字才顯示標題
 
 if (tableTitle) {
-  html +=
-    '<h2 style="' +
-      'color:#fff;' +
-      'margin:35px 0 12px;' +
-      'font-size:28px;' +
-      'font-weight:700;' +
-    '">' +
-      escapeHtml(tableTitle) +
-    '</h2>';
+  html += tableTitle;
 }
   
     html += '<div style="overflow-x:auto;">';
