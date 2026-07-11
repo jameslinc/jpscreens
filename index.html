@@ -2425,15 +2425,9 @@ Object.keys(productTypeData).forEach(function(type){
       }
     ];
   }
-const titleRow =
-  allCols.find(function(col) {
-    return String(col.table_title || "").trim() !== "";
-  });
 
-const tableTitle =
-  titleRow
-    ? String(titleRow.table_title || "").trim()
-    : "";
+
+
   
 rows = rows.slice().sort(function(a, b){
 
@@ -2473,17 +2467,6 @@ const tableTitle =
     : "";
 
 // 有文字才顯示標題
-if (tableTitle) {
-  html +=
-    '<h2 style="' +
-      'color:#fff;' +
-      'margin:35px 0 12px;' +
-      'font-size:28px;' +
-      'font-weight:700;' +
-    '">' +
-      escapeHtml(tableTitle) +
-    '</h2>';
-}
 
 if (tableTitle) {
   html +=
