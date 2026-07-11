@@ -2244,7 +2244,21 @@ console.log(
   rows
 );
 
-  rows.forEach(function(col){
+ rows.forEach(function(col){
+
+  console.log(col);
+
+  const type =
+    String(col.product_type || "")
+      .toLowerCase()
+      .trim();
+
+  if (!window.productTableSetting[type]) {
+    window.productTableSetting[type] = [];
+  }
+
+  window.productTableSetting[type].push(col);
+});
 
     const type =
       String(col.product_type || "")
