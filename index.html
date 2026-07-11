@@ -2222,64 +2222,80 @@ renderOtherProductTypeTables();
 }
 
 
-async function loadProductTableSetting(){
+async function loadProductTableSetting() {
 
   window.productTableSetting = {};
 
-  const res = await fetch(
-  "https://lcdscreentek-demo-slide-banner.lcdscreentek.workers.dev/api/product-table-setting?web_id=" +
-  encodeURIComponent(currentWebId)
-);
+  try {
 
-  const json = await res.json();
-  const rows = json.data || [];
+    const res = await fetch(
+      "https://lcdscreentek-demo-slide-banner.lcdscreentek.workers.dev/api/product-table-setting?web_id=" +
+      encodeURIComponent(currentWebId)
+    );
 
-  console.log(
-  "PRODUCT_TABLE_SETTING API 回傳：",
-  json
-);
-
-console.log(
-  "PRODUCT_TABLE_SETTING rows：",
-  rows
-);
-
- rows.forEach(function(col){
-
-  console.log(col);
-
-  const type =
-    String(col.product_type || "")
-      .toLowerCase()
-      .trim();
-
-  if (!window.productTableSetting[type]) {
-    window.productTableSetting[type] = [];
-  }
-
-  window.productTableSetting[type].push(col);
-});
-
-    const type =
-      String(col.product_type || "")
-      .toLowerCase()
-      .trim();
-
-    if (!window.productTableSetting[type]) {
-      window.productTableSetting[type] = [];
+    if (!res.ok) {
+      throw new Error(
+        "PRODUCT_TABLE_SETTING API HTTP " +
+        res.status
+      );
     }
 
-    window.productTableSetting[type].push(col);
-  });
-  
-  Object.keys(window.productTableSetting).forEach(function(type){
+    const json = await res.json();
+    const rows = Array.isArray(json.data)
+      ? json.data
+      : [];
 
-  window.productTableSetting[type].sort(function(a, b){
-    return Number(a.sort_order || 0) - Number(b.sort_order || 0);
-  });
+    console.log(
+      "PRODUCT_TABLE_SETTING API 回傳：",
+      json
+    );
 
-});
+    console.log(
+      "PRODUCT_TABLE_SETTING rows：",
+      rows
+    );
 
+    rows.forEach(function(col) {
+
+      const type =
+        String(col.product_type || "")
+          .toLowerCase()
+          .trim();
+
+      if (!type) {
+        return;
+      }
+
+      if (!window.productTableSetting[type]) {
+        window.productTableSetting[type] = [];
+      }
+
+      window.productTableSetting[type].push(col);
+    });
+
+    Object.keys(
+      window.productTableSetting
+    ).forEach(function(type) {
+
+      window.productTableSetting[type].sort(
+        function(a, b) {
+          return (
+            Number(a.sort_order || 0) -
+            Number(b.sort_order || 0)
+          );
+        }
+      );
+    });
+
+  } catch (err) {
+
+    console.error(
+      "loadProductTableSetting failed:",
+      err
+    );
+
+    window.productTableSetting = {};
+  }
 }
 
 async function loadOtherProductTypeData(){
