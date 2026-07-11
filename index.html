@@ -1829,6 +1829,21 @@ const allPanelCols =
   window.productTableSetting.panel
     ? window.productTableSetting.panel
     : [];
+// =========================
+// PANEL TABLE_TITLE
+// 取第一個有文字的 table_title
+// =========================
+
+const panelTitleRow =
+  allPanelCols.find(function(col) {
+    return String(col.table_title || "").trim() !== "";
+  });
+
+const panelTableTitle =
+  panelTitleRow
+    ? String(panelTitleRow.table_title || "").trim()
+    : "";
+  
   console.log(
   "目前 currentWebId =",
   currentWebId
@@ -1921,9 +1936,22 @@ if (!allPanelCols.length) {
     };
   });
 
-  let html = "";
+ let html = "";
 
-  html += productSizeFilterHtml(selectedSize);
+// TABLE_TITLE 有文字才輸出
+if (panelTableTitle) {
+  html +=
+    '<h2 style="' +
+      'color:#fff;' +
+      'margin:20px 0 12px;' +
+      'font-size:28px;' +
+      'font-weight:700;' +
+    '">' +
+      escapeHtml(panelTableTitle) +
+    '</h2>';
+}
+
+html += productSizeFilterHtml(selectedSize);
 
 /*
   html += '<div class="product-info-row">';
@@ -2397,7 +2425,16 @@ Object.keys(productTypeData).forEach(function(type){
       }
     ];
   }
+const titleRow =
+  allCols.find(function(col) {
+    return String(col.table_title || "").trim() !== "";
+  });
 
+const tableTitle =
+  titleRow
+    ? String(titleRow.table_title || "").trim()
+    : "";
+  
 rows = rows.slice().sort(function(a, b){
 
   const keyA =
@@ -2420,10 +2457,46 @@ rows = rows.slice().sort(function(a, b){
   return 0;
 });
 
-    html += '<h2 style="color:#fff;margin-top:35px;">' +
-      escapeHtml(type.toUpperCase()) +
-      '</h2>';
+    // =========================
+// TABLE_TITLE
+// 同一個 product_type 取第一個有文字的值
+// =========================
 
+const titleRow =
+  allCols.find(function(col) {
+    return String(col.table_title || "").trim() !== "";
+  });
+
+const tableTitle =
+  titleRow
+    ? String(titleRow.table_title || "").trim()
+    : "";
+
+// 有文字才顯示標題
+if (tableTitle) {
+  html +=
+    '<h2 style="' +
+      'color:#fff;' +
+      'margin:35px 0 12px;' +
+      'font-size:28px;' +
+      'font-weight:700;' +
+    '">' +
+      escapeHtml(tableTitle) +
+    '</h2>';
+}
+
+if (tableTitle) {
+  html +=
+    '<h2 style="' +
+      'color:#fff;' +
+      'margin:35px 0 12px;' +
+      'font-size:28px;' +
+      'font-weight:700;' +
+    '">' +
+      escapeHtml(tableTitle) +
+    '</h2>';
+}
+  
     html += '<div style="overflow-x:auto;">';
 
     html += '<table style="width:100%;border-collapse:collapse;background:#fff;color:#000;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">';
