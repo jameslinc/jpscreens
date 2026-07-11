@@ -2234,6 +2234,16 @@ async function loadProductTableSetting(){
   const json = await res.json();
   const rows = json.data || [];
 
+  console.log(
+  "PRODUCT_TABLE_SETTING API 回傳：",
+  json
+);
+
+console.log(
+  "PRODUCT_TABLE_SETTING rows：",
+  rows
+);
+
   rows.forEach(function(col){
 
     const type =
