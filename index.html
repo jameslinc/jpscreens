@@ -2318,15 +2318,64 @@ async function loadProductTableSetting() {
   }
 }
 
-async function loadOtherProductTypeData(){
+
+async function loadOtherProductTypeData() {
 
   window.productTypeData = {};
 
-  const productTypes = [
-    "controller",
-    "touch",
-    "solution"
-  ];
+  // =========================
+  // 自動收集所有 product_type
+  // =========================
+
+  const productTypeSet = new Set();
+
+  // 1. 從 PRODUCT_TABLE_SETTING 取得產品類型
+  Object.keys(
+    window.productTableSetting || {}
+  ).forEach(function(type) {
+
+    const normalizedType =
+      String(type || "")
+        .trim()
+        .toLowerCase();
+
+    if (
+      normalizedType &&
+      normalizedType !== "panel"
+    ) {
+      productTypeSet.add(normalizedType);
+    }
+  });
+
+  // 2. 從 WEB_PANEL API 已載入的資料取得產品類型
+  // 即使該類型尚未建立 PRODUCT_TABLE_SETTING，
+  // 也可以使用預設欄位顯示
+  (window.productAllRows || []).forEach(function(row) {
+
+    const normalizedType =
+      String(row.product_type || "")
+        .trim()
+        .toLowerCase();
+
+    if (
+      normalizedType &&
+      normalizedType !== "panel"
+    ) {
+      productTypeSet.add(normalizedType);
+    }
+  });
+
+  const productTypes =
+    Array.from(productTypeSet);
+
+  console.log(
+    "自動載入的 product_type：",
+    productTypes
+  );
+
+  // =========================
+  // 逐一讀取每種產品
+  // =========================
 
   for (const type of productTypes) {
 
@@ -2339,20 +2388,35 @@ async function loadOtherProductTypeData(){
         encodeURIComponent(type)
       );
 
+      if (!res.ok) {
+        throw new Error(
+          "HTTP " + res.status
+        );
+      }
+
       const json = await res.json();
-      const rows = json.data || [];
+
+      const rows =
+        Array.isArray(json.data)
+          ? json.data
+          : [];
 
       window.productTypeData[type] = rows;
 
-    } catch(err) {
-      console.log("load product type failed:", type, err);
+    } catch (err) {
+
+      console.log(
+        "load product type failed:",
+        type,
+        err
+      );
+
+      window.productTypeData[type] = [];
     }
   }
 
   renderOtherProductTypeTables();
 }
-
-
 
 function renderOtherProductTypeTables(){
 
