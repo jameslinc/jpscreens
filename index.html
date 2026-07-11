@@ -1816,6 +1816,47 @@ const normalRows = filtered.slice(
 );
 
 const pageRows = selectedRows.concat(normalRows);
+  // =========================
+// PANEL 欄位設定
+// =========================
+
+let panelCols =
+  window.productTableSetting &&
+  window.productTableSetting.panel
+    ? window.productTableSetting.panel.filter(function(col) {
+        return Number(col.is_show ?? 1) === 1;
+      })
+    : [];
+
+// 沒有設定時使用預設欄位
+if (!panelCols.length) {
+  panelCols = [
+    {
+      field_name: "brand",
+      field_label: "Brand"
+    },
+    {
+      field_name: "panel_model",
+      field_label: "Model"
+    },
+    {
+      field_name: "size",
+      field_label: "Size"
+    },
+    {
+      field_name: "resolution",
+      field_label: "Resolution"
+    },
+    {
+      field_name: "brightness",
+      field_label: "Brightness"
+    },
+    {
+      field_name: "signal_interface",
+      field_label: "Interface"
+    }
+  ];
+}
 
   window.inquiryProductRows = pageRows.map(function(row) {
     const productKey =
@@ -1882,27 +1923,45 @@ html += '</div>';
   html += '<div style="overflow-x:auto;">';
   html += '<table style="width:100%;border-collapse:collapse;background:#fff;color:#000;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">';
 
-  html += '<thead>';
- html += '<tr style="background:#222;color:#fff;font-family:\'Barlow Condensed\',sans-serif;font-size:24px;letter-spacing:1px;">';
+html += '<thead>';
 
- /*
-// SM_ICON
-html += '<th style="padding:10px;border:1px solid #ccc;"></th>';
+html +=
+  '<tr style="' +
+  'background:#222;' +
+  'color:#fff;' +
+  'font-family:\'Barlow Condensed\',sans-serif;' +
+  'font-size:24px;' +
+  'letter-spacing:1px;' +
+  '">';
 
-// PIC_LINK
-html += '<th style="padding:10px;border:1px solid #ccc;"></th>';
-*/
+panelCols.forEach(function(col) {
 
+  let thStyle =
+    'padding:10px;' +
+    'border:1px solid #ccc;';
 
-  html += '<th style="padding:10px;border:1px solid #ccc;">Brand</th>';
-  html += '<th style="padding:10px;border:1px solid #ccc;">panel_model</th>';
-  html += '<th style="padding:10px;border:1px solid #ccc;">Size</th>';
-  html += '<th style="padding:10px;border:1px solid #ccc;">Resolution</th>';
-  html += '<th style="padding:10px;border:1px solid #ccc;">Brightness</th>';
-  html += '<th style="padding:10px;border:1px solid #ccc;">signal_interface</th>';
-  html += '<th style="padding:10px;border:1px solid #ccc;">Inquiry</th>';
-  html += '</tr>';
-  html += '</thead>';
+  if (col.width) {
+    thStyle +=
+      'width:' + escapeAttr(col.width) + ';';
+  }
+
+  html +=
+    '<th style="' + thStyle + '">' +
+    escapeHtml(
+      col.field_label ||
+      col.field_name ||
+      ""
+    ) +
+    '</th>';
+});
+
+html +=
+  '<th style="padding:10px;border:1px solid #ccc;">' +
+  'Inquiry' +
+  '</th>';
+
+html += '</tr>';
+html += '</thead>'; 
   html += '<tbody>';
 
   pageRows.forEach(function(row, idx) {
@@ -1987,19 +2046,98 @@ html += '</td>';
 // brand
 // =========================
 
-html += '<td style="padding:8px;border:1px solid #ccc;">' +
-  escapeHtml(row.brand || "") +
-  '</td>';
+panelCols.forEach(function(col) {
+
+  const fieldName =
+    String(col.field_name || "").trim();
+
+  let value =
+    row[fieldName] ?? "";
+
+  let tdStyle =
+    'padding:8px;' +
+    'border:1px solid #ccc;';
+
+  if (col.width) {
+    tdStyle +=
+      'width:' + escapeAttr(col.width) + ';';
+  }
+
+  html += '<td style="' + tdStyle + '">';
+
+  // =========================
+  // panel_model
+  // =========================
+  if (fieldName === "panel_model") {
+
+    html += pnHtml;
+
     if (rowSelected) {
-      pnHtml += '<span class="product-selected-badge">RFQ</span>';
+      html +=
+        '<span class="product-selected-badge">RFQ</span>';
     }
 
-    html += '<td style="padding:8px;border:1px solid #ccc;">' + pnHtml + '</td>';
-    html += '<td style="padding:8px;border:1px solid #ccc;">' + escapeHtml(normalizeSize(row.size || "")) + '"</td>';
-    html += '<td style="padding:8px;border:1px solid #ccc;">' + escapeHtml(row.resolution || "") + '</td>';
-    html += '<td style="padding:8px;border:1px solid #ccc;">' + escapeHtml(row.brightness || "") + '</td>';
-    html += '<td style="padding:8px;border:1px solid #ccc;">' + escapeHtml(row.signal_interface || "") + '</td>';
+  // =========================
+  // 圖片欄位
+  // =========================
+  } else if (
+    fieldName === "pic_link" ||
+    fieldName === "sm_icon"
+  ) {
 
+    if (value) {
+
+      let imgStyle =
+        'max-width:' + escapeAttr(col.width || "180px") + ';' +
+        'max-height:' + escapeAttr(col.height || "120px") + ';' +
+        'width:auto;' +
+        'height:auto;' +
+        'object-fit:contain;' +
+        'display:block;' +
+        'margin:0 auto;' +
+        'border-radius:12px;';
+
+      html +=
+        '<img src="' +
+        escapeAttr(value) +
+        '" style="' +
+        imgStyle +
+        '">';
+    }
+
+  // =========================
+  // Size
+  // =========================
+  } else if (fieldName === "size") {
+
+    const sizeText =
+      normalizeSize(value || "");
+
+    html += escapeHtml(sizeText);
+
+    if (sizeText) {
+      html += '&quot;';
+    }
+
+  // =========================
+  // para_html 不直接顯示 HTML
+  // =========================
+  } else if (fieldName === "para_html") {
+
+    html += value
+      ? '<span style="color:#666;">DETAIL</span>'
+      : "";
+
+  // =========================
+  // 一般欄位
+  // =========================
+  } else {
+
+    html += escapeHtml(value);
+  }
+
+  html += '</td>';
+});
     html += '<td style="padding:8px;border:1px solid #ccc;text-align:center;white-space:nowrap;">';
     html += '<input type="text" class="inquiry-qty" placeholder="QTY" value="">';
     html += '<button type="button" class="inquiry-small-btn" ';
@@ -2618,7 +2756,17 @@ async function toggleProductDetail(a) {
   detailTr.className = "product-detail-row";
 
   const detailTd = document.createElement("td");
-  detailTd.colSpan = 7;
+const panelCols =
+  window.productTableSetting &&
+  window.productTableSetting.panel
+    ? window.productTableSetting.panel.filter(function(col) {
+        return Number(col.is_show ?? 1) === 1;
+      })
+    : [];
+
+detailTd.colSpan =
+  Math.max(panelCols.length, 6) + 1;
+  
 
   const paraHtml = String(data.para_html || "").trim();
   const rowId = String(data.id || "").trim();
