@@ -1820,16 +1820,42 @@ const pageRows = selectedRows.concat(normalRows);
 // PANEL 欄位設定
 // =========================
 
-let panelCols =
+// =========================
+// PANEL 欄位設定
+// =========================
+
+const allPanelCols =
   window.productTableSetting &&
   window.productTableSetting.panel
-    ? window.productTableSetting.panel.filter(function(col) {
-        return Number(col.is_show ?? 1) === 1;
-      })
+    ? window.productTableSetting.panel
     : [];
 
-// 沒有設定時使用預設欄位
-if (!panelCols.length) {
+// 如果 PRODUCT_TABLE_SETTING 裡有 panel 設定，
+// 而且所有 ROW 的 is_show 都是 0，
+// 整個 PANEL 區塊不顯示
+if (
+  allPanelCols.length > 0 &&
+  allPanelCols.every(function(col) {
+    return Number(col.is_show || 0) === 0;
+  })
+) {
+  box.innerHTML =
+    '<div id="otherProductTypeBox" ' +
+    'style="margin-top:22px;margin-bottom:22px;"></div>';
+
+  renderOtherProductTypeTables();
+  return;
+}
+
+// 只保留 is_show = 1 的欄位
+let panelCols =
+  allPanelCols.filter(function(col) {
+    return Number(col.is_show ?? 1) === 1;
+  });
+
+// PRODUCT_TABLE_SETTING 完全沒有 panel 設定時，
+// 才使用預設欄位
+if (!allPanelCols.length) {
   panelCols = [
     {
       field_name: "brand",
@@ -2266,12 +2292,57 @@ function renderOtherProductTypeTables(){
 
   let html = '';
 
-  Object.keys(productTypeData).forEach(function(type){
+Object.keys(productTypeData).forEach(function(type){
 
-   let rows =
-  productTypeData[type] || [];
+  let rows =
+    productTypeData[type] || [];
 
-if (!rows.length) return;
+  if (!rows.length) return;
+
+  // =========================
+  // 取得這個 product_type 的設定
+  // =========================
+  const allCols =
+    window.productTableSetting &&
+    window.productTableSetting[type]
+      ? window.productTableSetting[type]
+      : [];
+
+  // 有設定資料，但所有欄位 is_show 都是 0，
+  // 整個 product_type 不顯示
+  if (
+    allCols.length > 0 &&
+    allCols.every(function(col) {
+      return Number(col.is_show || 0) === 0;
+    })
+  ) {
+    return;
+  }
+
+  // 只留下需要顯示的欄位
+  let cols =
+    allCols.filter(function(col) {
+      return Number(col.is_show ?? 1) === 1;
+    });
+
+  // 完全沒有 PRODUCT_TABLE_SETTING 設定時，
+  // 才使用預設欄位
+  if (!allCols.length) {
+    cols = [
+      {
+        field_name: "brand",
+        field_label: "Brand"
+      },
+      {
+        field_name: "panel_model",
+        field_label: "Model"
+      },
+      {
+        field_name: "signal_interface",
+        field_label: "Interface"
+      }
+    ];
+  }
 
 rows = rows.slice().sort(function(a, b){
 
@@ -2303,19 +2374,7 @@ rows = rows.slice().sort(function(a, b){
 
     html += '<table style="width:100%;border-collapse:collapse;background:#fff;color:#000;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">';
 
-  let cols =
-  window.productTableSetting &&
-  window.productTableSetting[type]
-    ? window.productTableSetting[type]
-    : [];
-
-if (!cols.length) {
-  cols = [
-    { field_name: "brand", field_label: "Brand" },
-    { field_name: "panel_model", field_label: "Model" },
-    { field_name: "signal_interface", field_label: "Interface" }
-  ];
-}
+ 
 
 
 html += '<tr style="background:#222;color:#fff;font-size:24px;">';
