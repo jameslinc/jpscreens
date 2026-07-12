@@ -1632,7 +1632,20 @@ if (privacyBox) {
       "Load company info failed: " + err.message;
   }
 }
-}function escapeHtml(str) {
+}
+
+   function langText(key, fallback) {
+  const value =
+    window.LANG &&
+    window.LANG[key] !== undefined
+      ? String(window.LANG[key]).trim()
+      : "";
+
+  return value || fallback;
+}
+   
+   
+function escapeHtml(str) {
   return String(str || "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
