@@ -2869,6 +2869,15 @@ function toggleOtherProductInquiryFromButton(btn){
     .replace(/inch/ig, "")
     .trim();
 }
+
+   /* 加回這一段 */
+function normalizeSize(v) {
+  return String(v || "")
+    .trim()
+    .replace(/["]/g, "")
+    .replace(/inch/ig, "")
+    .trim();
+}
    
 function setProductKeyword(value) {
   productKeyword = String(value || "").trim().toLowerCase();
