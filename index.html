@@ -2773,7 +2773,12 @@ function productSizeFilterHtml(activeSize) {
   <input
     id="productKeywordInput"
     type="text"
-    placeholder="Search model / brand / size / resolution"
+    placeholder="${
+  escapeAttr(
+    window.LANG?.search_placeholder ||
+    "Search model / brand / size / resolution"
+  )
+}"
     value="${escapeAttr(productKeyword || "")}"
     style="
       width:100%;
@@ -2800,7 +2805,12 @@ function productSizeFilterHtml(activeSize) {
       cursor:pointer;
     "
   >
-    SEARCH
+    ${
+  escapeHtml(
+    window.LANG?.btn_search ||
+    "SEARCH"
+  )
+}
   </button>
 
 </div>
