@@ -2862,6 +2862,14 @@ function toggleOtherProductInquiryFromButton(btn){
   return html;
 }
 
+   function normalizeSize(v) {
+  return String(v || "")
+    .trim()
+    .replace(/["]/g, "")
+    .replace(/inch/ig, "")
+    .trim();
+}
+   
 function setProductKeyword(value) {
   productKeyword = String(value || "").trim().toLowerCase();
   window.productPage = 1;
