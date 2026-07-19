@@ -972,6 +972,52 @@ function getVisitorId() {
 const VISITOR_ID =
 getVisitorId();
 
+  // ========================================
+// Email Tracking → Visitor 關聯
+// ========================================
+
+async function linkEmailTracking() {
+
+  const emailTid =
+    new URLSearchParams(
+      location.search
+    ).get("email_tid");
+
+  if (!emailTid) {
+    return;
+  }
+
+  try {
+
+    await fetch(
+
+      "https://visitor-email.lcdscreentek.workers.dev/email/link" +
+
+      "?tracking_id=" +
+      encodeURIComponent(emailTid) +
+
+      "&visitor_id=" +
+      encodeURIComponent(VISITOR_ID)
+
+    );
+
+    console.log(
+      "Email linked:",
+      emailTid
+    );
+
+  } catch(err) {
+
+    console.log(
+      "Email link failed",
+      err
+    );
+
+  }
+
+}
+  
+
 let currentWebId =
   Number(window.CURRENT_WEB_ID || 0);
   
@@ -1278,7 +1324,7 @@ renderOtherProductTypeTables();
 }
 
 window.addEventListener("pageshow", function () {
-
+  linkEmailTracking();
   loadInquiryCart();
 
   if (typeof updateInquiryRemark === "function") {
