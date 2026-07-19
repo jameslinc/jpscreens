@@ -1339,16 +1339,23 @@ renderOtherProductTypeTables();
     slider.innerHTML = '<div style="padding:20px;color:red;">Load banners failed: ' + err.message + '</div>';
   }
 }
+window.addEventListener(
+  "pageshow",
+  function () {
 
-window.addEventListener("pageshow", function () {
-  linkEmailTracking();
-  loadInquiryCart();
+    linkEmailTracking();
 
-  if (typeof updateInquiryRemark === "function") {
-    updateInquiryRemark();
+    loadInquiryCart();
+
+    if (
+      typeof updateInquiryRemark ===
+      "function"
+    ) {
+      updateInquiryRemark();
+    }
+
   }
-
-});
+);
 
 
 </script>
