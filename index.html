@@ -969,10 +969,10 @@ function getVisitorId() {
   return visitorId;
 }
 
-const VISITOR_ID =
-getVisitorId();
+ const VISITOR_ID =
+  getVisitorId();
 
-  // ========================================
+// ========================================
 // Email Tracking → Visitor 關聯
 // ========================================
 
@@ -980,7 +980,7 @@ async function linkEmailTracking() {
 
   const emailTid =
     new URLSearchParams(
-      location.search
+      window.location.search
     ).get("email_tid");
 
   if (!emailTid) {
@@ -989,33 +989,50 @@ async function linkEmailTracking() {
 
   try {
 
-    await fetch(
-
+    const apiUrl =
       "https://visitor-email.lcdscreentek.workers.dev/email/link" +
 
       "?tracking_id=" +
       encodeURIComponent(emailTid) +
 
       "&visitor_id=" +
-      encodeURIComponent(VISITOR_ID)
+      encodeURIComponent(VISITOR_ID);
 
-    );
+    const response =
+      await fetch(
+        apiUrl,
+        {
+          method: "GET",
+          cache: "no-store"
+        }
+      );
+
+    const result =
+      await response.text();
+
+    if (!response.ok) {
+      throw new Error(
+        "HTTP " +
+        response.status +
+        " " +
+        result
+      );
+    }
 
     console.log(
-      "Email linked:",
-      emailTid
+      "Email tracking linked:",
+      result
     );
 
-  } catch(err) {
+  } catch (err) {
 
     console.log(
-      "Email link failed",
+      "Email tracking link failed:",
       err
     );
 
   }
-
-}
+} 
   
 
 let currentWebId =
