@@ -969,6 +969,25 @@ function getVisitorId() {
  const VISITOR_ID =
   getVisitorId();
 
+const ENTRY_REFERRER_KEY =
+  "TWSCREEN_ENTRY_REFERRER";
+
+if (
+  sessionStorage.getItem(
+    ENTRY_REFERRER_KEY
+  ) === null
+) {
+  sessionStorage.setItem(
+    ENTRY_REFERRER_KEY,
+    document.referrer || ""
+  );
+}
+
+const ENTRY_REFERRER =
+  sessionStorage.getItem(
+    ENTRY_REFERRER_KEY
+  ) || "";
+  
 // ========================================
 // Email Tracking → Visitor 關聯
 // ========================================
