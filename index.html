@@ -1358,6 +1358,47 @@ async function checkEditorTrust() {
   }
 }
 
+  // ========================================
+// 首頁只記錄一次
+// ========================================
+
+let homePageViewLogged =
+  false;
+
+function writeHomePageView() {
+
+  if (
+    homePageViewLogged
+  ) {
+    return;
+  }
+
+  if (
+    Number(
+      currentWebId || 0
+    ) <= 0
+  ) {
+    console.log(
+      "首頁 visitor log 暫停：currentWebId 尚未取得",
+      currentWebId
+    );
+
+    return;
+  }
+
+  homePageViewLogged =
+    true;
+
+  console.log(
+    "開始寫入首頁 visitor log：",
+    currentWebId
+  );
+
+  writeVisitorLog(
+    "page_view",
+    {}
+  );
+}
 
 async function loadSlides() {
 
@@ -1373,10 +1414,18 @@ loadInquiryCart();
     const json = await res.json();
     const data = json.data || [];
 
-    if (!Array.isArray(data) || data.length === 0) {
-  slider.innerHTML = '<div style="padding:20px;">No banners found.</div>';
+   if (
+  !Array.isArray(data) ||
+  data.length === 0
+) {
+  slider.innerHTML =
+    '<div style="padding:20px;">No banners found.</div>';
+
+ 
+  writeHomePageView();
 
   await initTopbar();
+     
   await loadWebCont();
   await loadCompanyBrief();
   await loadSeoKeyword();
@@ -1393,9 +1442,18 @@ loadInquiryCart();
   return;
 }
    
+currentWebId =
+  Number(
+    data[0].web_id || 0
+  );
 
-    currentWebId = Number(data[0].web_id || 0);
-    await initTopbar();
+// ========================================
+// currentWebId 已確認，記錄首頁瀏覽
+// ========================================
+
+writeHomePageView();
+
+await initTopbar();
 
     slider.innerHTML = data.map((item, i) => {
       const href = item.link_url && item.link_url.trim() ? item.link_url.trim() : "#";
