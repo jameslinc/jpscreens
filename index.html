@@ -818,6 +818,19 @@ body {
   position: sticky;
   top: 0;
   z-index: 9999;
+
+  transform: translateY(0);
+
+  transition:
+    transform 0.35s
+    cubic-bezier(0.16, 1, 0.3, 1);
+
+  will-change: transform;
+}
+
+/* 往下滑動時隱藏 */
+#topbarBox.topbar-hidden{
+  transform: translateY(-100%);
 }
 
 /* =========================
@@ -4531,7 +4544,96 @@ loadSlides();
 loadBuyerInfoFromServer();
 
 </script>
+<!-- =====================================================
+     Top Bar 往下隱藏 / 往上出現
+===================================================== -->
 
+<script>
+(function () {
+
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+
+  const topbarBox =
+    document.getElementById("topbarBox");
+
+  if (!topbarBox) return;
+
+
+  function updateTopbar() {
+
+    const currentScrollY =
+      window.scrollY;
+
+
+    /* 回到最上方一定顯示 */
+    if (currentScrollY <= 10) {
+
+      topbarBox.classList.remove(
+        "topbar-hidden"
+      );
+
+      lastScrollY = currentScrollY;
+      ticking = false;
+
+      return;
+    }
+
+
+    /* 往下滑 → 隱藏 */
+    if (
+      currentScrollY >
+      lastScrollY + 6
+    ) {
+
+      topbarBox.classList.add(
+        "topbar-hidden"
+      );
+
+    }
+
+
+    /* 往上滑 → 顯示 */
+    else if (
+      currentScrollY <
+      lastScrollY - 6
+    ) {
+
+      topbarBox.classList.remove(
+        "topbar-hidden"
+      );
+
+    }
+
+
+    lastScrollY =
+      currentScrollY;
+
+    ticking = false;
+  }
+
+
+  window.addEventListener(
+    "scroll",
+    function () {
+
+      if (!ticking) {
+
+        window.requestAnimationFrame(
+          updateTopbar
+        );
+
+        ticking = true;
+      }
+
+    },
+    {
+      passive: true
+    }
+  );
+
+})();
+</script>
 <div
   onclick="showMemberLogin()"
   style="
