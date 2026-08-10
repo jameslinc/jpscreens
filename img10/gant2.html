@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>拖拉式甘特圖</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:
+        Arial,
+        "Microsoft JhengHei",
+        sans-serif;
+    background:#f5f6f8;
+    color:#333;
+}
+
+/* =========================
+   頂部
+========================= */
+
+.topbar{
+    width:100%;
+    background:#ffffff;
+    border-bottom:1px solid #ddd;
+    padding:16px 24px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.title{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.actions{
+    display:flex;
+    gap:8px;
+}
+
+button{
+    border:0;
+    border-radius:6px;
+    padding:9px 16px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.btn-add{
+    background:#1976d2;
+    color:white;
+}
+
+.btn-clear{
+    background:#eeeeee;
+    color:#333;
+}
+
+
+/* =========================
+   主區域
+========================= */
+
+.page{
+    width:96%;
+    max-width:1800px;
+    margin:20px auto;
+}
+
+.gantt-box{
+    background:#fff;
+    border:1px solid #ddd;
+    overflow:auto;
+}
+
+
+/* =========================
+   甘特圖
+========================= */
+
+.gantt{
+    min-width:1500px;
+}
+
+
+/* =========================
+   Header
+========================= */
+
+.gantt-header,
+.gantt-row{
+
+    display:grid;
+
+    grid-template-columns:
+        60px
+        240px
+        130px
+        130px
+        130px
+        100px
+        60px
+        1fr;
+}
+
+.gantt-header{
+    background:#263238;
+    color:#fff;
+    font-weight:bold;
+    position:sticky;
+    top:0;
+    z-index:20;
+}
+
+.header-cell{
+    padding:12px 8px;
+    border-right:1px solid #455a64;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+
+/* =========================
+   Row
+========================= */
+
+.gantt-row{
+    min-height:58px;
+    border-bottom:1px solid #ddd;
+}
+
+.gantt-row:hover{
+    background:#fafafa;
+}
+
+.cell{
+    border-right:1px solid #ddd;
+    padding:6px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+
+/* =========================
+   Input
+========================= */
+
+.cell input{
+    width:100%;
+    height:36px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    padding:5px 8px;
+    font-size:14px;
+}
+
+.cell input:focus{
+    outline:none;
+    border-color:#1976d2;
+}
+
+
+/* =========================
+   日期 Header
+========================= */
+
+.timeline-header{
+    position:relative;
+    overflow:hidden;
+}
+
+.date-row{
+    display:grid;
+    height:48px;
+}
+
+.date-cell{
+    border-right:1px solid #546e7a;
+    font-size:11px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    white-space:nowrap;
+}
+
+
+/* =========================
+   Timeline
+========================= */
+
+.timeline{
+    position:relative;
+    height:58px;
+    background:#fff;
+}
+
+
+/* 每一天格線 */
+
+.day-grid{
+    position:absolute;
+    inset:0;
+    display:grid;
+    pointer-events:none;
+}
+
+.day-grid-cell{
+    border-right:1px solid #eceff1;
+}
+
+
+/* =========================
+   甘特條
+========================= */
+
+.task-bar{
+
+    position:absolute;
+
+    top:13px;
+    height:32px;
+
+    background:#1976d2;
+    border-radius:5px;
+
+    color:#fff;
+
+    display:flex;
+    align-items:center;
+
+    cursor:grab;
+
+    user-select:none;
+
+    overflow:hidden;
+
+    z-index:5;
+}
+
+.task-bar:active{
+    cursor:grabbing;
+}
+
+.task-label{
+
+    flex:1;
+
+    padding:0 10px;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+
+    font-size:12px;
+
+    pointer-events:none;
+}
+
+
+/* =========================
+   完成進度
+========================= */
+
+.task-progress{
+
+    position:absolute;
+
+    left:0;
+    top:0;
+    bottom:0;
+
+    background:rgba(255,255,255,.23);
+
+    pointer-events:none;
+}
+
+
+/* =========================
+   Resize Handle
+========================= */
+
+.resize-handle{
+
+    position:absolute;
+
+    width:8px;
+
+    top:0;
+    bottom:0;
+
+    cursor:ew-resize;
+
+    z-index:8;
+}
+
+.resize-left{
+    left:0;
+}
+
+.resize-right{
+    right:0;
+}
+
+
+/* =========================
+   刪除
+========================= */
+
+.delete-btn{
+
+    width:32px;
+    height:32px;
+
+    padding:0;
+
+    border-radius:50%;
+
+    background:#ffebee;
+    color:#c62828;
+
+    font-size:18px;
+}
+
+.delete-btn:hover{
+    background:#ffcdd2;
+}
+
+
+/* =========================
+   空白提示
+========================= */
+
+.empty{
+
+    padding:50px 20px;
+
+    text-align:center;
+
+    color:#888;
+}
+
+.empty-title{
+    font-size:18px;
+    margin-bottom:8px;
+}
+
+.empty-text{
+    font-size:14px;
+}
+
+
+/* =========================
+   Mobile
+========================= */
+
+@media(max-width:700px){
+
+    .topbar{
+        padding:12px;
+    }
+
+    .title{
+        font-size:18px;
+    }
+
+    .page{
+        width:100%;
+        margin:10px 0;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- =========================
+     TOP
+========================= -->
+
+<div class="topbar">
+
+    <div class="title">
+        拖拉式專案甘特圖
+    </div>
+
+    <div class="actions">
+
+        <button
+            class="btn-add"
+            id="addTaskBtn"
+        >
+            ＋ 新增工作
+        </button>
+
+        <button
+            class="btn-clear"
+            id="clearBtn"
+        >
+            清空
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<div class="page">
+
+    <div class="gantt-box">
+
+        <div class="gantt">
+
+            <!-- HEADER -->
+
+            <div class="gantt-header">
+
+                <div class="header-cell">
+                    #
+                </div>
+
+                <div class="header-cell">
+                    工作項目
+                </div>
+
+                <div class="header-cell">
+                    負責人
+                </div>
+
+                <div class="header-cell">
+                    開始日期
+                </div>
+
+                <div class="header-cell">
+                    結束日期
+                </div>
+
+                <div class="header-cell">
+                    完成度
+                </div>
+
+                <div class="header-cell">
+                    刪除
+                </div>
+
+                <div
+                    class="timeline-header"
+                    id="timelineHeader"
+                >
+                </div>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div id="ganttBody"></div>
+
+
+            <!-- EMPTY -->
+
+            <div
+                class="empty"
+                id="emptyMessage"
+            >
+
+                <div class="empty-title">
+                    目前沒有工作項目
+                </div>
+
+                <div class="empty-text">
+                    點右上角「＋ 新增工作」開始建立甘特圖
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   甘特圖設定
+===================================================== */
+
+const totalDays = 90;
+
+
+/*
+   甘特圖從今天前 7 天開始
+*/
+
+const ganttStart = new Date();
+
+ganttStart.setHours(
+    0,
+    0,
+    0,
+    0
+);
+
+ganttStart.setDate(
+    ganttStart.getDate() - 7
+);
+
+
+/* =====================================================
+   資料
+===================================================== */
+
+let tasks = [];
+
+let nextId = 1;
+
+
+/* =====================================================
+   日期轉 yyyy-mm-dd
+===================================================== */
+
+function formatDate(
+    date
+){
+
+    const y =
+        date.getFullYear();
+
+    const m =
+        String(
+            date.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const d =
+        String(
+            date.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return (
+        y +
+        "-" +
+        m +
+        "-" +
+        d
+    );
+
+}
+
+
+/* =====================================================
+   yyyy-mm-dd → Date
+===================================================== */
+
+function parseDate(
+    value
+){
+
+    const parts =
+        value.split("-");
+
+    return new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
+    );
+
+}
+
+
+/* =====================================================
+   日期差
+===================================================== */
+
+function diffDays(
+    start,
+    end
+){
+
+    const ms =
+        24 *
+        60 *
+        60 *
+        1000;
+
+    return Math.round(
+        (
+            end -
+            start
+        )
+        /
+        ms
+    );
+
+}
+
+
+/* =====================================================
+   加日期
+===================================================== */
+
+function addDays(
+    date,
+    days
+){
+
+    const d =
+        new Date(
+            date
+        );
+
+    d.setDate(
+        d.getDate() +
+        days
+    );
+
+    return d;
+
+}
+
+
+/* =====================================================
+   Header
+===================================================== */
+
+function buildHeader(){
+
+    const header =
+        document.getElementById(
+            "timelineHeader"
+        );
+
+    header.innerHTML = "";
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+    row.className =
+        "date-row";
+
+    row.style.gridTemplateColumns =
+        `repeat(${totalDays}, 42px)`;
+
+
+    for(
+        let i = 0;
+        i < totalDays;
+        i++
+    ){
+
+        const date =
+            addDays(
+                ganttStart,
+                i
+            );
+
+        const cell =
+            document.createElement(
+                "div"
+            );
+
+        cell.className =
+            "date-cell";
+
+        cell.innerHTML =
+            (
+                date.getMonth() + 1
+            )
+            +
+            "/"
+            +
+            date.getDate();
+
+        row.appendChild(
+            cell
+        );
+
+    }
+
+    header.appendChild(
+        row
+    );
+
+}
+
+
+/* =====================================================
+   新增工作
+===================================================== */
+
+function addTask(){
+
+    const today =
+        new Date();
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+    const task = {
+
+        id:nextId++,
+
+        name:"",
+
+        owner:"",
+
+        start:
+            formatDate(
+                today
+            ),
+
+        end:
+            formatDate(
+                addDays(
+                    today,
+                    4
+                )
+            ),
+
+        progress:0
+
+    };
+
+    tasks.push(
+        task
+    );
+
+    render();
+
+}
+
+
+/* =====================================================
+   刪除
+===================================================== */
+
+function deleteTask(
+    id
+){
+
+    tasks =
+        tasks.filter(
+            task =>
+                task.id !== id
+        );
+
+    render();
+
+}
+
+
+/* =====================================================
+   Render
+===================================================== */
+
+function render(){
+
+    const body =
+        document.getElementById(
+            "ganttBody"
+        );
+
+    const empty =
+        document.getElementById(
+            "emptyMessage"
+        );
+
+    body.innerHTML = "";
+
+
+    if(
+        tasks.length === 0
+    ){
+
+        empty.style.display =
+            "block";
+
+        return;
+
+    }
+
+    empty.style.display =
+        "none";
+
+
+    tasks.forEach(
+        (
+            task,
+            index
+        ) => {
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+        row.className =
+            "gantt-row";
+
+
+        /* =====================
+           編號
+        ===================== */
+
+        const noCell =
+            makeCell();
+
+        noCell.textContent =
+            index + 1;
+
+
+        /* =====================
+           工作項目
+        ===================== */
+
+        const nameCell =
+            makeCell();
+
+        const nameInput =
+            document.createElement(
+                "input"
+            );
+
+        nameInput.type =
+            "text";
+
+        nameInput.placeholder =
+            "輸入工作項目";
+
+        nameInput.value =
+            task.name;
+
+        nameInput.addEventListener(
+            "input",
+            function(){
+
+                task.name =
+                    this.value;
+
+                updateBarLabel(
+                    task.id
+                );
+
+            }
+        );
+
+        nameCell.appendChild(
+            nameInput
+        );
+
+
+        /* =====================
+           負責人
+        ===================== */
+
+        const ownerCell =
+            makeCell();
+
+        const ownerInput =
+            document.createElement(
+                "input"
+            );
+
+        ownerInput.type =
+            "text";
+
+        ownerInput.placeholder =
+            "負責人";
+
+        ownerInput.value =
+            task.owner;
+
+        ownerInput.addEventListener(
+            "input",
+            function(){
+
+                task.owner =
+                    this.value;
+
+            }
+        );
+
+        ownerCell.appendChild(
+            ownerInput
+        );
+
+
+        /* =====================
+           Start
+        ===================== */
+
+        const startCell =
+            makeCell();
+
+        const startInput =
+            document.createElement(
+                "input"
+            );
+
+        startInput.type =
+            "date";
+
+        startInput.value =
+            task.start;
+
+        startInput.addEventListener(
+            "change",
+            function(){
+
+                task.start =
+                    this.value;
+
+                if(
+                    task.end <
+                    task.start
+                ){
+
+                    task.end =
+                        task.start;
+
+                }
+
+                render();
+
+            }
+        );
+
+        startCell.appendChild(
+            startInput
+        );
+
+
+        /* =====================
+           End
+        ===================== */
+
+        const endCell =
+            makeCell();
+
+        const endInput =
+            document.createElement(
+                "input"
+            );
+
+        endInput.type =
+            "date";
+
+        endInput.value =
+            task.end;
+
+        endInput.addEventListener(
+            "change",
+            function(){
+
+                task.end =
+                    this.value;
+
+                if(
+                    task.end <
+                    task.start
+                ){
+
+                    task.start =
+                        task.end;
+
+                }
+
+                render();
+
+            }
+        );
+
+        endCell.appendChild(
+            endInput
+        );
+
+
+        /* =====================
+           Progress
+        ===================== */
+
+        const progressCell =
+            makeCell();
+
+        const progressInput =
+            document.createElement(
+                "input"
+            );
+
+        progressInput.type =
+            "number";
+
+        progressInput.min =
+            "0";
+
+        progressInput.max =
+            "100";
+
+        progressInput.value =
+            task.progress;
+
+        progressInput.addEventListener(
+            "change",
+            function(){
+
+                let value =
+                    Number(
+                        this.value
+                    );
+
+                if(
+                    value < 0
+                ){
+                    value = 0;
+                }
+
+                if(
+                    value > 100
+                ){
+                    value = 100;
+                }
+
+                task.progress =
+                    value;
+
+                render();
+
+            }
+        );
+
+        progressCell.appendChild(
+            progressInput
+        );
+
+
+        /* =====================
+           Delete
+        ===================== */
+
+        const deleteCell =
+            makeCell();
+
+        const deleteBtn =
+            document.createElement(
+                "button"
+            );
+
+        deleteBtn.className =
+            "delete-btn";
+
+        deleteBtn.textContent =
+            "×";
+
+        deleteBtn.addEventListener(
+            "click",
+            function(){
+
+                deleteTask(
+                    task.id
+                );
+
+            }
+        );
+
+        deleteCell.appendChild(
+            deleteBtn
+        );
+
+
+        /* =====================
+           Timeline
+        ===================== */
+
+        const timeline =
+            document.createElement(
+                "div"
+            );
+
+        timeline.className =
+            "timeline";
+
+        timeline.dataset.taskId =
+            task.id;
+
+        timeline.style.width =
+            (
+                totalDays *
+                42
+            )
+            +
+            "px";
+
+
+        /* Grid */
+
+        const grid =
+            document.createElement(
+                "div"
+            );
+
+        grid.className =
+            "day-grid";
+
+        grid.style.gridTemplateColumns =
+            `repeat(${totalDays}, 42px)`;
+
+
+        for(
+            let i = 0;
+            i < totalDays;
+            i++
+        ){
+
+            const cell =
+                document.createElement(
+                    "div"
+                );
+
+            cell.className =
+                "day-grid-cell";
+
+            grid.appendChild(
+                cell
+            );
+
+        }
+
+        timeline.appendChild(
+            grid
+        );
+
+
+        createBar(
+            timeline,
+            task
+        );
+
+
+        /* append */
+
+        row.appendChild(
+            noCell
+        );
+
+        row.appendChild(
+            nameCell
+        );
+
+        row.appendChild(
+            ownerCell
+        );
+
+        row.appendChild(
+            startCell
+        );
+
+        row.appendChild(
+            endCell
+        );
+
+        row.appendChild(
+            progressCell
+        );
+
+        row.appendChild(
+            deleteCell
+        );
+
+        row.appendChild(
+            timeline
+        );
+
+        body.appendChild(
+            row
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   Cell
+===================================================== */
+
+function makeCell(){
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.className =
+        "cell";
+
+    return div;
+
+}
+
+
+/* =====================================================
+   建立甘特條
+===================================================== */
+
+function createBar(
+    timeline,
+    task
+){
+
+    const startDate =
+        parseDate(
+            task.start
+        );
+
+    const endDate =
+        parseDate(
+            task.end
+        );
+
+
+    let startOffset =
+        diffDays(
+            ganttStart,
+            startDate
+        );
+
+
+    const duration =
+        Math.max(
+            1,
+            diffDays(
+                startDate,
+                endDate
+            ) + 1
+        );
+
+
+    const bar =
+        document.createElement(
+            "div"
+        );
+
+    bar.className =
+        "task-bar";
+
+    bar.dataset.taskId =
+        task.id;
+
+
+    bar.style.left =
+        (
+            startOffset *
+            42
+        )
+        +
+        "px";
+
+
+    bar.style.width =
+        (
+            duration *
+            42
+        )
+        +
+        "px";
+
+
+    /* Progress */
+
+    const progress =
+        document.createElement(
+            "div"
+        );
+
+    progress.className =
+        "task-progress";
+
+    progress.style.width =
+        task.progress +
+        "%";
+
+    bar.appendChild(
+        progress
+    );
+
+
+    /* Label */
+
+    const label =
+        document.createElement(
+            "div"
+        );
+
+    label.className =
+        "task-label";
+
+    label.id =
+        "bar-label-" +
+        task.id;
+
+    label.textContent =
+        task.name ||
+        "未命名工作";
+
+    bar.appendChild(
+        label
+    );
+
+
+    /* Left resize */
+
+    const leftHandle =
+        document.createElement(
+            "div"
+        );
+
+    leftHandle.className =
+        "resize-handle resize-left";
+
+    bar.appendChild(
+        leftHandle
+    );
+
+
+    /* Right resize */
+
+    const rightHandle =
+        document.createElement(
+            "div"
+        );
+
+    rightHandle.className =
+        "resize-handle resize-right";
+
+    bar.appendChild(
+        rightHandle
+    );
+
+
+    timeline.appendChild(
+        bar
+    );
+
+
+    enableDrag(
+        bar,
+        task
+    );
+
+    enableResizeLeft(
+        leftHandle,
+        task
+    );
+
+    enableResizeRight(
+        rightHandle,
+        task
+    );
+
+}
+
+
+/* =====================================================
+   更新文字
+===================================================== */
+
+function updateBarLabel(
+    id
+){
+
+    const task =
+        tasks.find(
+            item =>
+                item.id === id
+        );
+
+    const label =
+        document.getElementById(
+            "bar-label-" +
+            id
+        );
+
+    if(
+        label &&
+        task
+    ){
+
+        label.textContent =
+            task.name ||
+            "未命名工作";
+
+    }
+
+}
+
+
+/* =====================================================
+   拖曳整個 Bar
+===================================================== */
+
+function enableDrag(
+    bar,
+    task
+){
+
+    bar.addEventListener(
+        "mousedown",
+        function(
+            event
+        ){
+
+            if(
+                event.target.classList.contains(
+                    "resize-handle"
+                )
+            ){
+                return;
+            }
+
+            event.preventDefault();
+
+
+            const startMouseX =
+                event.clientX;
+
+            const originalStart =
+                parseDate(
+                    task.start
+                );
+
+            const originalEnd =
+                parseDate(
+                    task.end
+                );
+
+
+            function mouseMove(
+                e
+            ){
+
+                const diffPx =
+                    e.clientX -
+                    startMouseX;
+
+                const dayMove =
+                    Math.round(
+                        diffPx /
+                        42
+                    );
+
+
+                task.start =
+                    formatDate(
+                        addDays(
+                            originalStart,
+                            dayMove
+                        )
+                    );
+
+
+                task.end =
+                    formatDate(
+                        addDays(
+                            originalEnd,
+                            dayMove
+                        )
+                    );
+
+
+                const offset =
+                    diffDays(
+                        ganttStart,
+                        parseDate(
+                            task.start
+                        )
+                    );
+
+
+                bar.style.left =
+                    (
+                        offset *
+                        42
+                    )
+                    +
+                    "px";
+
+            }
+
+
+            function mouseUp(){
+
+                document.removeEventListener(
+                    "mousemove",
+                    mouseMove
+                );
+
+                document.removeEventListener(
+                    "mouseup",
+                    mouseUp
+                );
+
+                render();
+
+            }
+
+
+            document.addEventListener(
+                "mousemove",
+                mouseMove
+            );
+
+            document.addEventListener(
+                "mouseup",
+                mouseUp
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   左邊 Resize
+===================================================== */
+
+function enableResizeLeft(
+    handle,
+    task
+){
+
+    handle.addEventListener(
+        "mousedown",
+        function(
+            event
+        ){
+
+            event.stopPropagation();
+
+            event.preventDefault();
+
+
+            const startMouseX =
+                event.clientX;
+
+            const originalStart =
+                parseDate(
+                    task.start
+                );
+
+            const end =
+                parseDate(
+                    task.end
+                );
+
+
+            function mouseMove(
+                e
+            ){
+
+                const diffPx =
+                    e.clientX -
+                    startMouseX;
+
+                const dayMove =
+                    Math.round(
+                        diffPx /
+                        42
+                    );
+
+
+                const newStart =
+                    addDays(
+                        originalStart,
+                        dayMove
+                    );
+
+
+                if(
+                    newStart <= end
+                ){
+
+                    task.start =
+                        formatDate(
+                            newStart
+                        );
+
+                    renderBarOnly(
+                        task
+                    );
+
+                }
+
+            }
+
+
+            function mouseUp(){
+
+                document.removeEventListener(
+                    "mousemove",
+                    mouseMove
+                );
+
+                document.removeEventListener(
+                    "mouseup",
+                    mouseUp
+                );
+
+                render();
+
+            }
+
+
+            document.addEventListener(
+                "mousemove",
+                mouseMove
+            );
+
+            document.addEventListener(
+                "mouseup",
+                mouseUp
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   右邊 Resize
+===================================================== */
+
+function enableResizeRight(
+    handle,
+    task
+){
+
+    handle.addEventListener(
+        "mousedown",
+        function(
+            event
+        ){
+
+            event.stopPropagation();
+
+            event.preventDefault();
+
+
+            const startMouseX =
+                event.clientX;
+
+            const originalEnd =
+                parseDate(
+                    task.end
+                );
+
+            const start =
+                parseDate(
+                    task.start
+                );
+
+
+            function mouseMove(
+                e
+            ){
+
+                const diffPx =
+                    e.clientX -
+                    startMouseX;
+
+                const dayMove =
+                    Math.round(
+                        diffPx /
+                        42
+                    );
+
+
+                const newEnd =
+                    addDays(
+                        originalEnd,
+                        dayMove
+                    );
+
+
+                if(
+                    newEnd >= start
+                ){
+
+                    task.end =
+                        formatDate(
+                            newEnd
+                        );
+
+                    renderBarOnly(
+                        task
+                    );
+
+                }
+
+            }
+
+
+            function mouseUp(){
+
+                document.removeEventListener(
+                    "mousemove",
+                    mouseMove
+                );
+
+                document.removeEventListener(
+                    "mouseup",
+                    mouseUp
+                );
+
+                render();
+
+            }
+
+
+            document.addEventListener(
+                "mousemove",
+                mouseMove
+            );
+
+            document.addEventListener(
+                "mouseup",
+                mouseUp
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   拖曳時只更新 Bar
+===================================================== */
+
+function renderBarOnly(
+    task
+){
+
+    const bar =
+        document.querySelector(
+            '.task-bar[data-task-id="' +
+            task.id +
+            '"]'
+        );
+
+    if(
+        !bar
+    ){
+        return;
+    }
+
+
+    const start =
+        parseDate(
+            task.start
+        );
+
+    const end =
+        parseDate(
+            task.end
+        );
+
+
+    const offset =
+        diffDays(
+            ganttStart,
+            start
+        );
+
+
+    const duration =
+        diffDays(
+            start,
+            end
+        ) + 1;
+
+
+    bar.style.left =
+        (
+            offset *
+            42
+        )
+        +
+        "px";
+
+
+    bar.style.width =
+        (
+            duration *
+            42
+        )
+        +
+        "px";
+
+}
+
+
+/* =====================================================
+   Button
+===================================================== */
+
+document
+.getElementById(
+    "addTaskBtn"
+)
+.addEventListener(
+    "click",
+    addTask
+);
+
+
+document
+.getElementById(
+    "clearBtn"
+)
+.addEventListener(
+    "click",
+    function(){
+
+        if(
+            confirm(
+                "確定要清空所有工作項目嗎？"
+            )
+        ){
+
+            tasks = [];
+
+            render();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   啟動
+===================================================== */
+
+buildHeader();
+
+render();
+
+</script>
+
+</body>
+</html>
