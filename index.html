@@ -21,7 +21,10 @@ rel="stylesheet">
   <title>Industrial LCD Display</title>
   <script src="https://website-head-loader.lcdscreentek.workers.dev/head.js"></script>
 <style>
-    :root{
+:root{
+  /* =========================
+     色票
+  ========================= */
   --bg:#ffffff;
   --card:#ffffff;
   --text:#222222;
@@ -29,108 +32,375 @@ rel="stylesheet">
   --line:#dddddd;
   --accent:#0066cc;
   --accent2:#00a86b;
+
+  /* =========================
+     網站版型設定
+     不要在更換色票時刪掉
+  ========================= */
+  --max: 1480px;
+  --radius: 18px;
+  --shadow: 0 18px 60px rgba(20, 55, 90, 0.12);
 }
     *{box-sizing:border-box}
-    html,body{margin:0;background:radial-gradient(1000px 600px at 20% 0%, #162651 0%, rgba(22,38,81,0) 60%),
-                      radial-gradient(900px 500px at 85% 20%, #143a2e 0%, rgba(20,58,46,0) 55%),
-                      var(--bg);
-              color:var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", Arial;}
-    a{color:inherit;text-decoration:none}
+html,
+body {
+  margin: 0;
+  background: #ffffff;
+
+  color: var(--text);
+
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    "Noto Sans",
+    Arial;
+}    a{color:inherit;text-decoration:none}
     .container{width:min(var(--max), calc(100% - 40px)); margin:0 auto;}
-    .topbar{
-      position:sticky; top:0; z-index:50;
-      backdrop-filter: blur(12px);
-      background: rgba(11,18,32,.68);
-      border-bottom:1px solid var(--line);
-    }
-    .nav{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:14px 0;
-      gap:16px;
-    }
+/* =====================================================
+   TOP BAR
+   JP Screens｜白色日系工業風
+===================================================== */
 
-.brand{
-  width:180px;
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
 
-  font-family:'Bebas Neue',sans-serif;
+  background: rgba(236, 242, 248, 0.84);
 
-  font-size:18px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 
-  letter-spacing:2px;
+  border-bottom: 1px solid rgba(45, 92, 130, 0.12);
 
-  text-align:center;
-
-  display:flex;
-
-  flex-direction:column;
-
-  justify-content:center;
-
-  align-items:center;
-
-  line-height:1.0;
-
-  gap:10px;
+  box-shadow:
+    0 6px 20px rgba(25, 65, 100, 0.07);
 }
 
-.logo{
-  display:block;
+/* =====================================================
+   NAV
+===================================================== */
 
-  width:180px;
+.nav {
+  display: flex;
 
-  height:75px;
+  align-items: center;
+  justify-content: space-between;
 
-  border-radius:16px;
+  padding: 14px 0;
 
-  background-position:center;
-
-  background-size:cover;
-
-  background-repeat:no-repeat;
-
-  overflow:hidden;
-
-  box-shadow:none;
+  gap: 24px;
 }
 
-    .menu{display:flex; gap:18px; align-items:center; flex-wrap:wrap;}
 
-    .menu a{
-  font-family:'Bebas Neue',sans-serif;
+/* =====================================================
+   LOGO / BRAND
+===================================================== */
 
-  color:#ffffff;
+.brand {
+  width: 180px;
 
-  font-size:18px;
+  font-family:
+    Arial,
+    "Noto Sans JP",
+    "Yu Gothic",
+    sans-serif;
 
-  letter-spacing:1px;
+  font-size: 14px;
+  font-weight: 600;
 
-  font-weight:400;
+  letter-spacing: 0.08em;
 
-  padding:8px 10px;
+  text-align: center;
 
-  border-radius:12px;
+  color: #31526d;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  line-height: 1.2;
+
+  gap: 6px;
 }
 
-    .menu a:hover{background:rgba(255,255,255,.06); color:var(--text);}
-    .cta{display:flex; gap:10px; align-items:center;}
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:10px 14px; border-radius:14px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      color:var(--text); font-weight:650; font-size:14px;
-      transition:.15s transform ease, .15s background ease;
-      cursor:pointer;
-      white-space:nowrap;
-    }
-    .btn:hover{transform: translateY(-1px); background:rgba(255,255,255,.08);}
-    .btn.primary{
-      border:none;
-      background: linear-gradient(135deg, rgba(102,217,255,.95), rgba(124,255,178,.9));
-      color:#05101b;
-      box-shadow: 0 18px 60px rgba(102,217,255,.18);
-    }
-    .btn.primary:hover{filter:saturate(1.05)}
+
+.logo {
+  display: block;
+
+  width: 180px;
+  height: 75px;
+
+  border-radius: 10px;
+
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+
+  overflow: hidden;
+
+  box-shadow: none;
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+.menu {
+  display: flex;
+
+  gap: 28px;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+}
+
+
+.menu a {
+  position: relative;
+
+  padding: 9px 6px;
+
+  color: #29465f;
+
+  font-family:
+    Arial,
+    "Noto Sans JP",
+    "Yu Gothic",
+    "YuGothic",
+    "Hiragino Kaku Gothic ProN",
+    "Meiryo",
+    sans-serif;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  line-height: 1.4;
+
+  letter-spacing: 0.06em;
+
+  border-radius: 0;
+
+  transition:
+    color 0.25s ease,
+    opacity 0.25s ease;
+}
+
+
+.menu a::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  bottom: 1px;
+
+  width: 0;
+  height: 2px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #2388d1 0%,
+      #24bbc2 100%
+    );
+
+  transform: translateX(-50%);
+
+  transition:
+    width 0.28s
+    cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+
+.menu a:hover {
+  color: #1268aa;
+
+  background: transparent;
+}
+
+
+.menu a:hover::after {
+  width: 100%;
+}
+/* =====================================================
+   お問い合わせ 專用按鈕
+===================================================== */
+
+.menu a.jps-menu-contact {
+  padding: 9px 18px;
+
+  color: #264b68;
+
+  background:
+    rgba(255, 255, 255, 0.52);
+
+  border:
+    1px solid
+    rgba(29, 91, 139, 0.34);
+
+  border-radius: 999px;
+
+  font-weight: 700;
+
+  box-shadow:
+    0 5px 16px
+    rgba(31, 84, 124, 0.05);
+
+  transition:
+    color 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.menu a.jps-menu-contact:hover {
+  color: #1268aa;
+
+  background:
+    rgba(243, 249, 253, 0.92);
+
+  border-color:
+    rgba(31, 121, 198, 0.58);
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 8px 22px
+    rgba(31, 101, 153, 0.10);
+}
+
+
+/* お問い合わせ不顯示一般 MENU 的底線 */
+.menu a.jps-menu-contact::after {
+  display: none;
+}
+
+/* =====================================================
+   CTA
+===================================================== */
+
+.cta {
+  display: none !important;
+}
+
+
+/* 一般按鈕 */
+.btn {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+
+  padding:
+    9px
+    18px;
+
+  border-radius: 999px;
+
+  border:
+    1px solid
+    rgba(29, 91, 139, 0.32);
+
+  background: #ffffff;
+
+  color: #264b68;
+
+  font-family:
+    Arial,
+    "Noto Sans JP",
+    "Yu Gothic",
+    sans-serif;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  letter-spacing: 0.04em;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+
+  box-shadow:
+    0 5px 16px
+    rgba(31, 84, 124, 0.045);
+
+  transition:
+    color 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.btn:hover {
+  color: #1268aa;
+
+  background: #f3f9fd;
+
+  border-color:
+    rgba(31, 121, 198, 0.55);
+
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 8px 22px
+    rgba(31, 101, 153, 0.09);
+}
+
+
+/* 主按鈕 */
+.btn.primary {
+  border: 0;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      110deg,
+      #197ac2 0%,
+      #22aebc 100%
+    );
+
+  box-shadow:
+    0 9px 24px
+    rgba(26, 126, 173, 0.20);
+}
+
+
+.btn.primary:hover {
+  color: #ffffff;
+
+  filter: none;
+
+  background:
+    linear-gradient(
+      110deg,
+      #126cae 0%,
+      #1d9eaa 100%
+    );
+
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 12px 28px
+    rgba(26, 126, 173, 0.25);
+}
     .hero{padding:2px 0 26px;}
     .heroGrid{display:grid; grid-template-columns: 1.15fr .85fr; gap:26px; align-items:stretch;}
     .kicker{
@@ -250,14 +520,225 @@ rel="stylesheet">
       font-size:13px;
     }
     .muted{color:var(--muted);}
-    @media (max-width: 920px){
-      .heroGrid{grid-template-columns:1fr; }
-      h1{font-size:36px;}
-      .grid3{grid-template-columns:1fr;}
-      .grid2{grid-template-columns:1fr;}
-      .gallery{grid-template-columns:1fr;}
-      .menu{display:none;}
-    }
+/* =====================================================
+   TOP BAR / PAGE RWD
+===================================================== */
+
+@media (max-width: 920px) {
+
+  .heroGrid {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 36px;
+  }
+
+  .grid3 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+
+  /* =========================
+     Top Bar
+  ========================= */
+
+  .nav {
+    gap: 12px;
+  }
+
+  .brand {
+    width: 145px;
+    flex: 0 0 145px;
+
+    font-size: 11px;
+  }
+
+  .logo {
+    width: 145px;
+    height: 62px;
+  }
+
+
+  /* 不再隱藏選單 */
+  .menu {
+    display: flex;
+
+    gap: 12px;
+
+    flex: 1 1 auto;
+
+    justify-content: center;
+
+    flex-wrap: nowrap;
+  }
+
+  .menu a {
+    padding: 7px 4px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    letter-spacing: 0.03em;
+
+    white-space: nowrap;
+  }
+
+
+  .cta {
+    gap: 6px;
+  }
+
+  .btn {
+    min-height: 38px;
+
+    padding: 7px 12px;
+
+    font-size: 12px;
+  }
+}
+
+
+/* =====================================================
+   手機
+===================================================== */
+
+@media (max-width: 640px) {
+
+  .topbar {
+    background: rgba(236, 242, 248, 0.90);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+
+  .nav {
+    display: grid;
+
+    grid-template-columns:
+      auto
+      1fr;
+
+    grid-template-areas:
+      "brand cta"
+      "menu menu";
+
+    align-items: center;
+
+    gap:
+      8px
+      12px;
+
+    padding:
+      9px
+      0
+      8px;
+  }
+
+
+  /* Logo */
+  .brand {
+    grid-area: brand;
+
+    width: 125px;
+
+    flex: none;
+
+    align-items: flex-start;
+
+    font-size: 10px;
+
+    text-align: left;
+
+    gap: 3px;
+  }
+
+  .logo {
+    width: 125px;
+    height: 50px;
+
+    background-position: left center;
+  }
+
+
+  /* 右上按鈕 */
+  .cta {
+    grid-area: cta;
+
+    justify-content: flex-end;
+
+    gap: 6px;
+  }
+
+  .btn {
+    min-height: 34px;
+
+    padding:
+      6px
+      10px;
+
+    font-size: 11px;
+
+    border-radius: 999px;
+  }
+
+
+  /* 下方選單列 */
+  .menu {
+    grid-area: menu;
+
+    display: flex;
+
+    width: 100%;
+
+    gap: 20px;
+
+    justify-content: flex-start;
+
+    overflow-x: auto;
+
+    padding:
+      5px
+      2px
+      3px;
+
+    flex-wrap: nowrap;
+
+    scrollbar-width: none;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .menu::-webkit-scrollbar {
+    display: none;
+  }
+
+  .menu a {
+    flex: 0 0 auto;
+
+    padding:
+      7px
+      2px;
+
+    color: #29465f;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    letter-spacing: 0.04em;
+
+    white-space: nowrap;
+  }
+}
     .anchor{scroll-margin-top: 220px;}
   .img-box {
   position: relative;
@@ -1471,28 +1952,106 @@ window.addEventListener(
 
 
  <script>
-  // Smooth scroll
- document.addEventListener("click", function(e) {
-  const a = e.target.closest('a[href^="#"]');
-  if (!a) return;
+ /* =====================================================
+   Smooth Scroll
+   自動依 TOP BAR 實際高度定位
+===================================================== */
 
-  const id = a.getAttribute("href");
-  if (!id || id === "#") return;
+document.addEventListener(
+  "click",
+  function(e) {
 
-  const el = document.querySelector(id);
-  if (!el) return;
+    const a =
+      e.target.closest(
+        'a[href^="#"]'
+      );
 
-  e.preventDefault();
+    if (!a) return;
 
-  const y = el.offsetTop - 300;
 
-  window.scrollTo({
-    top: y,
-    behavior: "smooth"
-  });
+    const id =
+      a.getAttribute(
+        "href"
+      );
 
-  history.replaceState(null, "", id);
-});
+    if (
+      !id ||
+      id === "#"
+    ) {
+      return;
+    }
+
+
+    const el =
+      document.querySelector(
+        id
+      );
+
+    if (!el) return;
+
+
+    e.preventDefault();
+
+
+    /* =========================
+       取得 Top Bar 實際高度
+    ========================= */
+
+    const topbarBox =
+      document.getElementById(
+        "topbarBox"
+      );
+
+
+    const topbarHeight =
+      topbarBox
+        ? topbarBox.offsetHeight
+        : 0;
+
+
+    /*
+      Top Bar 下方多留 16px，
+      避免標題緊貼導覽列。
+    */
+    const extraGap = 16;
+
+
+    /* =========================
+       計算真正位置
+    ========================= */
+
+    const targetY =
+      el
+        .getBoundingClientRect()
+        .top
+      +
+      window.pageYOffset
+      -
+      topbarHeight
+      -
+      extraGap;
+
+
+    window.scrollTo({
+      top:
+        Math.max(
+          0,
+          targetY
+        ),
+
+      behavior:
+        "smooth"
+    });
+
+
+    history.replaceState(
+      null,
+      "",
+      id
+    );
+
+  }
+);
 
   function escapeAttr(str) {
     if (str === null || str === undefined) return "";
@@ -1710,9 +2269,149 @@ async function loadCompanyLogoSmall() {
   }
 }
 
+/* =========================================================
+   TOP BAR 主選單定位
+========================================================= */
+
+function setupMainNavigation() {
+
+  const topbar =
+    document.getElementById("topbarBox");
+
+  if (!topbar) return;
+
+
+  /* -----------------------------------------
+     需要前往的位置
+  ----------------------------------------- */
+
+  const navMap = {
+    company_a: "#brief1",
+    company_b: "#products",
+    company_c: "#solutions",
+    company_d: "#why",
+    company_e: "#rfq"
+  };
+
+
+  /* -----------------------------------------
+     先嘗試依 company_a ~ company_e 找按鈕
+  ----------------------------------------- */
+
+  Object.entries(navMap).forEach(
+    function([key, target]) {
+
+      const link =
+        topbar.querySelector(
+          '[data-lang="' + key + '"]'
+        ) ||
+        topbar.querySelector(
+          "#" + key
+        ) ||
+        topbar.querySelector(
+          '[data-key="' + key + '"]'
+        );
+
+      if (!link) return;
+
+      link.setAttribute(
+        "href",
+        target
+      );
+
+      link.removeAttribute(
+        "target"
+      );
+
+      link.removeAttribute(
+        "rel"
+      );
+
+
+      /* company_e = お問い合わせ */
+      if (key === "company_e") {
+
+        link.classList.add(
+          "jps-menu-contact"
+        );
+
+      }
+
+    }
+  );
+
+
+  /* -----------------------------------------
+     如果 Topbar 沒有 company_a 的 attribute，
+     再依照 MENU 原本順序設定
+  ----------------------------------------- */
+
+  const menuLinks =
+    Array.from(
+      topbar.querySelectorAll(
+        ".menu a"
+      )
+    );
+
+
+  const fallbackTargets = [
+    "#brief1",
+    "#products",
+    "#solutions",
+    "#why",
+    "#rfq"
+  ];
+
+
+  menuLinks
+    .slice(0, 5)
+    .forEach(
+      function(link, index) {
+
+        link.setAttribute(
+          "href",
+          fallbackTargets[index]
+        );
+
+        link.removeAttribute(
+          "target"
+        );
+
+        link.removeAttribute(
+          "rel"
+        );
+
+
+        if (index === 4) {
+
+          link.classList.add(
+            "jps-menu-contact"
+          );
+
+        }
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   初始化 TOP BAR
+========================================================= */
+
 async function initTopbar() {
+
   await loadTopbar();
+
+  /*
+    Topbar HTML 載入完之後，
+    才能修改 company_a ~ company_e。
+  */
+  setupMainNavigation();
+
   await loadCompanyLogoSmall();
+
 }
 
 async function loadCompanyInfo() {
