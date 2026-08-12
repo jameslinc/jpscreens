@@ -2084,7 +2084,14 @@ document.addEventListener(
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;");
   }
-  
+
+   function escapeJs(str) {
+  return String(str || "")
+    .replaceAll("\\", "\\\\")
+    .replaceAll("'", "\\'")
+    .replaceAll("\r", "\\r")
+    .replaceAll("\n", "\\n");
+}
 
 async function loadLanguage() {
 
