@@ -3982,12 +3982,24 @@ const tableTitle =
     : "";
 
 // 有文字才顯示標題
-
 if (tableTitle) {
   html += tableTitle;
 }
-  
-    html += '<div style="overflow-x:auto;">';
+
+
+// =====================================================
+// KEY_FIELD 快速分類
+// =====================================================
+
+html +=
+  otherProductKeyFieldFilterHtml(
+    type,
+    rows
+  );
+
+
+html += '<div style="overflow-x:auto;">';
+
 
     html += '<table style="width:100%;border-collapse:collapse;background:#fff;color:#000;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">';
 
