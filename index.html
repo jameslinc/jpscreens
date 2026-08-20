@@ -2936,9 +2936,11 @@ if (!allPanelCols.length) {
 if (panelTableTitle) {
   html += panelTableTitle;
 }
-
-html += productSizeFilterHtml(selectedSize);
-
+html +=
+  productKeyFieldFilterHtml(
+    "panel",
+    allData
+  );
 /*
   html += '<div class="product-info-row">';
   html += '<div class="product-count-text">';
