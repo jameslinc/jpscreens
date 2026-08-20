@@ -3903,6 +3903,143 @@ function toggleOtherProductInquiryFromButton(btn){
   renderOtherProductTypeTables();
 }
 
+  // =====================================================
+// KEY_FIELD 快速分類
+// 例如：
+// key_field = size  → 5.7 / 7 / 10.4 / 15.6
+// key_field = brand → AUO / BOE / Innolux
+// =====================================================
+
+function productKeyFieldFilterHtml(
+  productType,
+  rows
+) {
+
+  const setting =
+    getProductTypeSetting(productType);
+
+  const keyField =
+    String(setting.key_field || "")
+      .trim()
+      .toLowerCase();
+
+  if (!keyField) {
+    return "";
+  }
+
+  const values = [];
+  const exists = new Set();
+
+  (rows || []).forEach(function(row) {
+
+    let value =
+      String(
+        row[keyField] ?? ""
+      ).trim();
+
+    if (keyField === "size") {
+      value =
+        normalizeSize(value);
+    }
+
+    if (!value) {
+      return;
+    }
+
+    const compare =
+      value.toLowerCase();
+
+    if (exists.has(compare)) {
+      return;
+    }
+
+    exists.add(compare);
+    values.push(value);
+
+  });
+
+
+  values.sort(function(a, b) {
+
+    const na = parseFloat(a);
+    const nb = parseFloat(b);
+
+    if (
+      Number.isFinite(na) &&
+      Number.isFinite(nb)
+    ) {
+      return na - nb;
+    }
+
+    return a.localeCompare(
+      b,
+      undefined,
+      {
+        numeric: true,
+        sensitivity: "base"
+      }
+    );
+  });
+
+
+  const activeValue =
+    String(
+      window.productKeyValue || ""
+    );
+
+
+  let html =
+    '<div class="product-azbar">';
+
+
+  // ALL
+  html +=
+    '<button type="button" class="' +
+    (activeValue === "" ? "active" : "") +
+    '" onclick="setProductKeyValue(\'\')">' +
+    'ALL' +
+    '</button>';
+
+
+  values.forEach(function(value) {
+
+    let label = value;
+
+    /*
+      如果主要分類是 SIZE
+      自動加 "
+    */
+    if (keyField === "size") {
+      label += '"';
+    }
+
+    html +=
+      '<button type="button" class="' +
+      (activeValue === value ? "active" : "") +
+      '" onclick="setProductKeyValue(\'' +
+      escapeJs(value) +
+      '\')">' +
+      escapeHtml(label) +
+      '</button>';
+  });
+
+
+  html += "</div>";
+
+  return html;
+}
+
+
+function setProductKeyValue(value) {
+
+  window.productKeyValue =
+    String(value || "");
+
+  window.productPage = 1;
+
+  renderProductTable();
+}
+  
    function productSizeFilterHtml(activeSize) {
   const allData = window.productAllRows || [];
 
