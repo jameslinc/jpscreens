@@ -2658,9 +2658,26 @@ function renderProductTable() {
 
 
 
-  const selectedSize = window.productSize || "";
-  const pageSize = window.productPageSize || 20;
-  let page = window.productPage || 1;
+ const panelSetting =
+  getProductTypeSetting("panel");
+
+const keyField =
+  String(
+    panelSetting.key_field || ""
+  )
+  .trim()
+  .toLowerCase();
+
+const selectedKeyValue =
+  String(
+    window.productKeyValue || ""
+  ).trim();
+
+const pageSize =
+  getProductPerPage("panel");
+
+let page =
+  window.productPage || 1;
 
 if (pageSize === 0) {
   box.innerHTML = "";
