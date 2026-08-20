@@ -3641,6 +3641,125 @@ function setOtherProductPage(
 
   renderOtherProductTypeTables();
 }  
+
+  function otherProductKeyFieldFilterHtml(
+  type,
+  rows
+) {
+
+  const setting =
+    getProductTypeSetting(type);
+
+  const keyField =
+    String(setting.key_field || "")
+      .trim()
+      .toLowerCase();
+
+  // 沒有設定 key_field 就不顯示
+  if (!keyField) {
+    return "";
+  }
+
+  const activeValue =
+    String(
+      window.otherProductKeyValue[type] || ""
+    );
+
+  const values = [];
+  const exists = new Set();
+
+  (rows || []).forEach(function(row) {
+
+    let value =
+      String(
+        row[keyField] ?? ""
+      ).trim();
+
+    if (keyField === "size") {
+      value = normalizeSize(value);
+    }
+
+    if (!value) {
+      return;
+    }
+
+    const compare =
+      value.toLowerCase();
+
+    if (exists.has(compare)) {
+      return;
+    }
+
+    exists.add(compare);
+    values.push(value);
+  });
+
+
+  // 排序
+  values.sort(function(a, b) {
+
+    const na = parseFloat(a);
+    const nb = parseFloat(b);
+
+    if (
+      Number.isFinite(na) &&
+      Number.isFinite(nb)
+    ) {
+      return na - nb;
+    }
+
+    return a.localeCompare(
+      b,
+      undefined,
+      {
+        numeric: true,
+        sensitivity: "base"
+      }
+    );
+  });
+
+
+  let html =
+    '<div class="product-azbar">';
+
+
+  // ALL
+  html +=
+    '<button type="button" class="' +
+    (activeValue === "" ? "active" : "") +
+    '" onclick="setOtherProductKeyValue(\'' +
+    escapeJs(type) +
+    '\',\'\')">' +
+    'ALL' +
+    '</button>';
+
+
+  values.forEach(function(value) {
+
+    let label = value;
+
+    if (keyField === "size") {
+      label += '"';
+    }
+
+    html +=
+      '<button type="button" class="' +
+      (activeValue === value ? "active" : "") +
+      '" onclick="setOtherProductKeyValue(\'' +
+      escapeJs(type) +
+      '\',\'' +
+      escapeJs(value) +
+      '\')">' +
+      escapeHtml(label) +
+      '</button>';
+  });
+
+
+  html += '</div>';
+
+  return html;
+}
+  
 function renderOtherProductTypeTables(){
 
   const box =
