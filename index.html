@@ -2683,13 +2683,50 @@ if (pageSize === 0) {
   box.innerHTML = "";
   return;
 }
+let filtered =
+  allData.slice();
 
-  let filtered = allData;
 
-  if (allData.length > 13) {
+// =========================
+// KEY_FIELD 快速分類
+// =========================
 
-  if (productKeyword) {
-    filtered = allData.filter(function(row) {
+if (
+  keyField &&
+  selectedKeyValue
+) {
+
+  filtered =
+    filtered.filter(function(row) {
+
+      let value =
+        String(
+          row[keyField] ?? ""
+        ).trim();
+
+      if (keyField === "size") {
+        value =
+          normalizeSize(value);
+      }
+
+      return (
+        value.toLowerCase() ===
+        selectedKeyValue.toLowerCase()
+      );
+
+    });
+}
+
+
+// =========================
+// 關鍵字搜尋
+// =========================
+
+if (productKeyword) {
+
+  filtered =
+    filtered.filter(function(row) {
+
       const text = [
         row.brand,
         row.panel_model,
@@ -2697,21 +2734,15 @@ if (pageSize === 0) {
         row.resolution,
         row.brightness,
         row.signal_interface
-      ].join(" ").toLowerCase();
+      ]
+      .join(" ")
+      .toLowerCase();
 
-      return text.includes(productKeyword);
+      return text.includes(
+        productKeyword
+      );
+
     });
-  }
-
-} else {
-
-  if (selectedSize) {
-    filtered = allData.filter(function(row) {
-      const size = normalizeSize(row.size || "");
-      return size === selectedSize;
-    });
-  }
-
 }
 
   // Keep selected RFQ products visible and pinned to the top,
