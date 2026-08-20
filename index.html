@@ -3930,7 +3930,41 @@ filteredRows =
 
     return 0;
   });
- 
+
+   // =====================================================
+  // 分頁
+  // =====================================================
+
+  const totalRows =
+    filteredRows.length;
+
+  const totalPages =
+    Math.max(
+      Math.ceil(
+        totalRows / perPage
+      ),
+      1
+    );
+
+  if (page > totalPages) {
+    page = totalPages;
+  }
+
+  if (page < 1) {
+    page = 1;
+  }
+
+  window.otherProductPage[type] =
+    page;
+
+  const start =
+    (page - 1) * perPage;
+
+  const pageRows =
+    filteredRows.slice(
+      start,
+      start + perPage
+    );
 
     // =========================
 // TABLE_TITLE
