@@ -4078,11 +4078,18 @@ filteredRows =
   const start =
     (page - 1) * perPage;
 
-  const pageRows =
-    filteredRows.slice(
-      start,
-      start + perPage
-    );
+ const normalPageRows =
+  filteredRows.slice(
+    start,
+    start + perPage
+  );
+
+
+// 已選 RFQ 永遠在上面
+const pageRows =
+  selectedRows.concat(
+    normalPageRows
+  );
 
     // =========================
 // TABLE_TITLE
