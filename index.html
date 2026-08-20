@@ -3909,7 +3909,28 @@ rows.forEach(function(row) {
   // =====================================================
 
   let filteredRows =
-    rows.slice();
+  rows.filter(function(row) {
+
+    const productKey =
+      type + "|" +
+      String(
+        row.id ||
+        row.panel_model ||
+        ""
+      ).trim();
+
+    // 已經 ADD TO RFQ 的
+    // 不放進一般資料，避免重複
+    return !inquiryCart.some(function(item) {
+
+      return (
+        String(item.productKey || "") ===
+        productKey
+      );
+
+    });
+
+  });
 
   if (
     keyField &&
