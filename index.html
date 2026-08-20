@@ -3779,6 +3779,66 @@ Object.keys(productTypeData).forEach(function(type){
 
   if (!rows.length) return;
 
+   // =====================================================
+  // WEB_PRODUCT_TYPE_SETTING
+  // =====================================================
+
+  const typeSetting =
+    getProductTypeSetting(type);
+
+  const keyField =
+    String(
+      typeSetting.key_field || ""
+    )
+    .trim()
+    .toLowerCase();
+
+  const perPage =
+    getProductPerPage(type);
+
+  const activeKeyValue =
+    String(
+      window.otherProductKeyValue[type] || ""
+    ).trim();
+
+  let page =
+    Number(
+      window.otherProductPage[type] || 1
+    );
+
+
+  // =====================================================
+  // KEY_FIELD 篩選
+  // =====================================================
+
+  let filteredRows =
+    rows.slice();
+
+  if (
+    keyField &&
+    activeKeyValue
+  ) {
+
+    filteredRows =
+      filteredRows.filter(function(row) {
+
+        let value =
+          String(
+            row[keyField] ?? ""
+          ).trim();
+
+        if (keyField === "size") {
+          value = normalizeSize(value);
+        }
+
+        return (
+          value.toLowerCase() ===
+          activeKeyValue.toLowerCase()
+        );
+
+      });
+  }
+ 
   // =========================
   // 取得這個 product_type 的設定
   // =========================
