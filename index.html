@@ -3259,6 +3259,68 @@ html += '</td>';
   html += '</tbody>';
 html += '</table>';
 html += '</div>';
+// =====================================================
+// Pager
+// =====================================================
+
+if (totalPages > 1) {
+
+  html +=
+    '<div class="product-pager">';
+
+  // 上一頁
+  if (page > 1) {
+
+    html +=
+      '<button type="button" ' +
+      'onclick="setOtherProductPage(\'' +
+      escapeJs(type) +
+      '\',' +
+      (page - 1) +
+      ')">' +
+      '&laquo;' +
+      '</button>';
+  }
+
+
+  // 頁碼
+  for (
+    let p = 1;
+    p <= totalPages;
+    p++
+  ) {
+
+    html +=
+      '<button type="button" class="' +
+      (p === page ? "active" : "") +
+      '" onclick="setOtherProductPage(\'' +
+      escapeJs(type) +
+      '\',' +
+      p +
+      ')">' +
+      p +
+      '</button>';
+  }
+
+
+  // 下一頁
+  if (page < totalPages) {
+
+    html +=
+      '<button type="button" ' +
+      'onclick="setOtherProductPage(\'' +
+      escapeJs(type) +
+      '\',' +
+      (page + 1) +
+      ')">' +
+      '&raquo;' +
+      '</button>';
+  }
+
+
+  html += '</div>';
+}
+ 
 /*
 if (allData.length > 13) {
 
