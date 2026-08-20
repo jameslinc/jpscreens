@@ -2608,13 +2608,23 @@ async function loadProductTable() {
     
 
 
-    window.productAllRows = data;
-    window.productSize = "";
-    window.productPage = 1;
-    window.productPageSize =
-  Number(window.companyInfo?.company_q ?? 20);
+   window.productAllRows = data;
 
-    renderProductTable();
+window.productPage = 1;
+
+/*
+  panel 每頁數量
+  改讀 WEB_PRODUCT_TYPE_SETTING.per_page
+*/
+window.productPageSize =
+  getProductPerPage("panel");
+
+/*
+  KEY_FIELD 目前選中的值
+*/
+window.productKeyValue = "";
+
+renderProductTable();
 
    await loadOtherProductTypeData();
 
