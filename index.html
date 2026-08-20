@@ -3594,6 +3594,53 @@ async function loadOtherProductTypeData() {
   renderOtherProductTypeTables();
 }
 
+// =====================================================
+// OTHER PRODUCT TYPE
+// 每個 product_type 各自記錄快速分類與頁碼
+// =====================================================
+
+window.otherProductKeyValue =
+  window.otherProductKeyValue || {};
+
+window.otherProductPage =
+  window.otherProductPage || {};
+
+
+function setOtherProductKeyValue(
+  type,
+  value
+) {
+
+  type =
+    String(type || "")
+      .trim()
+      .toLowerCase();
+
+  window.otherProductKeyValue[type] =
+    String(value || "");
+
+  // 切換分類後回第 1 頁
+  window.otherProductPage[type] = 1;
+
+  renderOtherProductTypeTables();
+}
+
+
+function setOtherProductPage(
+  type,
+  page
+) {
+
+  type =
+    String(type || "")
+      .trim()
+      .toLowerCase();
+
+  window.otherProductPage[type] =
+    Number(page || 1);
+
+  renderOtherProductTypeTables();
+}  
 function renderOtherProductTypeTables(){
 
   const box =
