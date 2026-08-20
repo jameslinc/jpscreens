@@ -3885,29 +3885,52 @@ Object.keys(productTypeData).forEach(function(type){
   }
 
 
+filteredRows =
+  filteredRows.slice().sort(function(a, b){
 
-  
-rows = rows.slice().sort(function(a, b){
+    const keyA =
+      type + "|" +
+      String(
+        a.id ||
+        a.panel_model ||
+        ""
+      ).trim();
 
-  const keyA =
-    type + "|" +
-    String(a.id || a.panel_model || "").trim();
+    const keyB =
+      type + "|" +
+      String(
+        b.id ||
+        b.panel_model ||
+        ""
+      ).trim();
 
-  const keyB =
-    type + "|" +
-    String(b.id || b.panel_model || "").trim();
+    const aSelected =
+      inquiryCart.some(function(item) {
+        return (
+          String(item.productKey || "") ===
+          keyA
+        );
+      });
 
-  const aSelected =
-    inquiryCart.some(item => String(item.productKey || "") === keyA);
+    const bSelected =
+      inquiryCart.some(function(item) {
+        return (
+          String(item.productKey || "") ===
+          keyB
+        );
+      });
 
-  const bSelected =
-    inquiryCart.some(item => String(item.productKey || "") === keyB);
+    if (aSelected && !bSelected) {
+      return -1;
+    }
 
-  if (aSelected && !bSelected) return -1;
-  if (!aSelected && bSelected) return 1;
+    if (!aSelected && bSelected) {
+      return 1;
+    }
 
-  return 0;
-});
+    return 0;
+  });
+ 
 
     // =========================
 // TABLE_TITLE
