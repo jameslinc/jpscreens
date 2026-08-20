@@ -3309,6 +3309,129 @@ async function loadProductTableSetting() {
   }
 }
 
+  // =====================================================
+// WEB_PRODUCT_TYPE_SETTING
+// 取得每一種 product_type 的 key_field / per_page
+// =====================================================
+
+async function loadProductTypeSetting() {
+
+  window.productTypeSetting = {};
+
+  if (!currentWebId) {
+    return;
+  }
+
+  try {
+
+    const res = await fetch(
+      "https://lcdscreentek-demo-slide-banner.lcdscreentek.workers.dev/api/product-type-setting?web_id=" +
+      encodeURIComponent(currentWebId)
+    );
+
+    if (!res.ok) {
+      throw new Error(
+        "PRODUCT_TYPE_SETTING HTTP " +
+        res.status
+      );
+    }
+
+    const json = await res.json();
+
+    const rows =
+      Array.isArray(json.data)
+        ? json.data
+        : [];
+
+    rows.forEach(function(row) {
+
+      const type =
+        String(row.product_type || "")
+          .trim()
+          .toLowerCase();
+
+      if (!type) return;
+
+      window.productTypeSetting[type] = {
+        product_type: type,
+
+        key_field:
+          String(row.key_field || "")
+            .trim()
+            .toLowerCase(),
+
+        per_page:
+          Number(row.per_page || 8)
+      };
+
+    });
+
+    console.log(
+      "WEB_PRODUCT_TYPE_SETTING =",
+      window.productTypeSetting
+    );
+
+  } catch (err) {
+
+    console.log(
+      "loadProductTypeSetting failed:",
+      err
+    );
+
+    window.productTypeSetting = {};
+  }
+}
+
+
+// =====================================================
+// 取得某一種 PRODUCT_TYPE 設定
+// =====================================================
+
+function getProductTypeSetting(type) {
+
+  type =
+    String(type || "")
+      .trim()
+      .toLowerCase();
+
+  if (
+    window.productTypeSetting &&
+    window.productTypeSetting[type]
+  ) {
+    return window.productTypeSetting[type];
+  }
+
+  return {
+    product_type: type,
+    key_field: "",
+    per_page: 8
+  };
+}
+
+
+// =====================================================
+// 取得每頁筆數
+// =====================================================
+
+function getProductPerPage(type) {
+
+  const setting =
+    getProductTypeSetting(type);
+
+  const n =
+    Number(setting.per_page || 8);
+
+  if (
+    Number.isFinite(n) &&
+    n > 0
+  ) {
+    return Math.floor(n);
+  }
+
+  return 8;
+}
+
+  
 
 async function loadOtherProductTypeData() {
 
