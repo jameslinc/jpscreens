@@ -3260,208 +3260,7 @@ html += '</td>';
 html += '</table>';
 html += '</div>';
 
- // =====================================================
-// Pager
-// 顯示：< [1] ... [6] [7] [8] [9] [10] ... [20] >
-// =====================================================
 
-if (totalPages > 1) {
-
-  html +=
-    '<div class="product-pager">';
-
-
-  // =====================================================
-  // 上一頁 <
-  // =====================================================
-
-  if (page > 1) {
-
-    html +=
-      '<button type="button" ' +
-      'onclick="setOtherProductPage(\'' +
-      escapeJs(type) +
-      '\',' +
-      (page - 1) +
-      ')">' +
-      '&laquo;' +
-      '</button>';
-  }
-
-
-  // =====================================================
-  // 要顯示哪些頁碼
-  // =====================================================
-
-  const pageNumbers = [];
-
-
-  // 7 頁以下全部顯示
-  if (totalPages <= 7) {
-
-    for (
-      let p = 1;
-      p <= totalPages;
-      p++
-    ) {
-
-      pageNumbers.push(p);
-    }
-
-  } else {
-
-    // 永遠顯示第一頁
-    pageNumbers.push(1);
-
-
-    let startPage =
-      Math.max(
-        2,
-        page - 2
-      );
-
-    let endPage =
-      Math.min(
-        totalPages - 1,
-        page + 2
-      );
-
-
-    // =========================
-    // 靠近最前面
-    // =========================
-
-    if (page <= 4) {
-
-      startPage = 2;
-      endPage = 5;
-    }
-
-
-    // =========================
-    // 靠近最後面
-    // =========================
-
-    if (
-      page >=
-      totalPages - 3
-    ) {
-
-      startPage =
-        totalPages - 4;
-
-      endPage =
-        totalPages - 1;
-    }
-
-
-    // =========================
-    // 前面的 ...
-    // =========================
-
-    if (startPage > 2) {
-
-      pageNumbers.push("...");
-    }
-
-
-    // =========================
-    // 中間頁碼
-    // =========================
-
-    for (
-      let p = startPage;
-      p <= endPage;
-      p++
-    ) {
-
-      pageNumbers.push(p);
-    }
-
-
-    // =========================
-    // 後面的 ...
-    // =========================
-
-    if (
-      endPage <
-      totalPages - 1
-    ) {
-
-      pageNumbers.push("...");
-    }
-
-
-    // 永遠顯示最後一頁
-    pageNumbers.push(totalPages);
-  }
-
-
-  // =====================================================
-  // 輸出頁碼
-  // =====================================================
-
-  pageNumbers.forEach(
-    function(p) {
-
-      // ...
-      if (p === "...") {
-
-        html +=
-          '<span style="' +
-          'display:inline-flex;' +
-          'align-items:center;' +
-          'padding:7px 4px;' +
-          'font-weight:bold;' +
-          'color:#666;' +
-          '">' +
-          '...' +
-          '</span>';
-
-        return;
-      }
-
-
-      // 正常頁碼
-      html +=
-        '<button type="button" class="' +
-        (
-          p === page
-            ? "active"
-            : ""
-        ) +
-        '" onclick="setOtherProductPage(\'' +
-        escapeJs(type) +
-        '\',' +
-        p +
-        ')">' +
-        p +
-        '</button>';
-
-    }
-  );
-
-
-  // =====================================================
-  // 下一頁 >
-  // =====================================================
-
-  if (page < totalPages) {
-
-    html +=
-      '<button type="button" ' +
-      'onclick="setOtherProductPage(\'' +
-      escapeJs(type) +
-      '\',' +
-      (page + 1) +
-      ')">' +
-      '&raquo;' +
-      '</button>';
-  }
-
-
-  html += '</div>';
-}
  
 /*
 if (allData.length > 13) {
@@ -4457,6 +4256,168 @@ html += escapeHtml(
     html += '</table>';
     html += '</div>';
 
+ 
+    // =====================================================
+    // OTHER PRODUCT PAGER
+    // < [1] ... [6] [7] [8] [9] [10] ... [20] >
+    // =====================================================
+
+    if (totalPages > 1) {
+
+      html += '<div class="product-pager">';
+
+
+      // 上一頁
+      if (page > 1) {
+
+        html +=
+          '<button type="button" ' +
+          'onclick="setOtherProductPage(\'' +
+          escapeJs(type) +
+          '\',' +
+          (page - 1) +
+          ')">&laquo;</button>';
+      }
+
+
+      const pageNumbers = [];
+
+
+      if (totalPages <= 7) {
+
+        for (
+          let p = 1;
+          p <= totalPages;
+          p++
+        ) {
+          pageNumbers.push(p);
+        }
+
+      } else {
+
+        // 第一頁
+        pageNumbers.push(1);
+
+        let startPage =
+          Math.max(
+            2,
+            page - 2
+          );
+
+        let endPage =
+          Math.min(
+            totalPages - 1,
+            page + 2
+          );
+
+
+        // 靠近前面
+        if (page <= 4) {
+          startPage = 2;
+          endPage = 5;
+        }
+
+
+        // 靠近最後
+        if (
+          page >=
+          totalPages - 3
+        ) {
+          startPage =
+            totalPages - 4;
+
+          endPage =
+            totalPages - 1;
+        }
+
+
+        // 前 ...
+        if (startPage > 2) {
+          pageNumbers.push("...");
+        }
+
+
+        // 中間頁碼
+        for (
+          let p = startPage;
+          p <= endPage;
+          p++
+        ) {
+          pageNumbers.push(p);
+        }
+
+
+        // 後 ...
+        if (
+          endPage <
+          totalPages - 1
+        ) {
+          pageNumbers.push("...");
+        }
+
+
+        // 最後一頁
+        pageNumbers.push(totalPages);
+      }
+
+
+      // 輸出頁碼
+      pageNumbers.forEach(
+        function(p) {
+
+          if (p === "...") {
+
+            html +=
+              '<span style="' +
+              'display:inline-flex;' +
+              'align-items:center;' +
+              'padding:7px 4px;' +
+              'font-weight:bold;' +
+              'color:#666;' +
+              '">' +
+              '...' +
+              '</span>';
+
+            return;
+          }
+
+
+          html +=
+            '<button type="button" class="' +
+            (
+              p === page
+                ? "active"
+                : ""
+            ) +
+            '" onclick="setOtherProductPage(\'' +
+            escapeJs(type) +
+            '\',' +
+            p +
+            ')">' +
+            p +
+            '</button>';
+
+        }
+      );
+
+
+      // 下一頁
+      if (page < totalPages) {
+
+        html +=
+          '<button type="button" ' +
+          'onclick="setOtherProductPage(\'' +
+          escapeJs(type) +
+          '\',' +
+          (page + 1) +
+          ')">&raquo;</button>';
+      }
+
+
+      html += '</div>';
+    }
+
+ 
   });
 
   box.innerHTML = html;
