@@ -5290,17 +5290,27 @@ function getUserRemarkOnly(text) {
 }
 
 function updateInquiryRemark() {
-  const rfqNotice = document.getElementById("rfqNotice");
+   // =====================================================
+  // 所有產品 TABLE 的 RFQ 提示一起控制
+  // =====================================================
 
-  if (rfqNotice) {
-    rfqNotice.style.display =
-      inquiryCart.length > 0
-        ? "block"
-        : "none";
-  }
+  document
+    .querySelectorAll(".rfq-complete-notice")
+    .forEach(function(rfqNotice) {
 
-  const list = document.getElementById("inquiryCartList");
-  const remark = document.getElementById("remark");
+      rfqNotice.style.display =
+        inquiryCart.length > 0
+          ? "block"
+          : "none";
+
+    });
+
+
+  const list =
+    document.getElementById("inquiryCartList");
+
+  const remark =
+    document.getElementById("remark");
 
   if (list) {
     if (!inquiryCart.length) {
