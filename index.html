@@ -2941,6 +2941,29 @@ html +=
     "panel",
     allData
   );
+// =====================================================
+// 有選 RFQ 時顯示提示
+// =====================================================
+
+html +=
+  '<div id="rfqNotice" ' +
+  'class="rfq-complete-notice" ' +
+  'style="margin:10px 0;text-align:right;">' +
+
+    '<a href="#rfq" ' +
+    'style="color:#d18b00;text-decoration:underline;font-weight:bold;">' +
+
+      escapeHtml(
+        langText(
+          "rfq_complete_notice",
+          "After making your selections, please complete the RFQ FORM."
+        )
+      ) +
+
+    '</a>' +
+
+  '</div>';
+ 
 /*
   html += '<div class="product-info-row">';
   html += '<div class="product-count-text">';
