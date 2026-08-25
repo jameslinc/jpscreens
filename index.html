@@ -4085,7 +4085,29 @@ html +=
     rows
   );
 
+// =====================================================
+// RFQ 提示
+// 有選產品時才會由 updateInquiryRemark() 顯示
+// =====================================================
 
+html +=
+  '<div class="rfq-complete-notice" ' +
+  'style="margin:10px 0;text-align:right;">' +
+
+    '<a href="#rfq" ' +
+    'style="color:#d18b00;text-decoration:underline;font-weight:bold;">' +
+
+      escapeHtml(
+        langText(
+          "rfq_complete_notice",
+          "After making your selections, please complete the RFQ FORM."
+        )
+      ) +
+
+    '</a>' +
+
+  '</div>';
+ 
 html += '<div style="overflow-x:auto;">';
 
 
