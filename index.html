@@ -4465,6 +4465,10 @@ html += escapeHtml(
   });
 
   box.innerHTML = html;
+  // 重新產生 Other Product HTML 後
+  // 再依 RFQ 數量決定提示是否顯示
+  updateInquiryRemark();
+ 
 }
 
 
