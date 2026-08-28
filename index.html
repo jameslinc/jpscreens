@@ -3445,16 +3445,23 @@ async function loadProductTypeSetting() {
       if (!type) return;
 
       window.productTypeSetting[type] = {
-        product_type: type,
+  product_type: type,
 
-        key_field:
-          String(row.key_field || "")
-            .trim()
-            .toLowerCase(),
+  key_field:
+    String(row.key_field || "")
+      .trim()
+      .toLowerCase(),
 
-        per_page:
-          Number(row.per_page || 8)
-      };
+  per_page:
+    Number(row.per_page || 8),
+
+  sort_order:
+    Number(
+      row.sort_order ??
+      row.SORT_ORDER ??
+      0
+    )
+};
 
     });
 
