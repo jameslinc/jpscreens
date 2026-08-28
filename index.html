@@ -3809,7 +3809,36 @@ function renderOtherProductTypeTables(){
 
   let html = '';
 
-Object.keys(productTypeData).forEach(function(type){
+Object.keys(productTypeData)
+  .sort(function(a, b){
+
+    const settingA =
+      getProductTypeSetting(a);
+
+    const settingB =
+      getProductTypeSetting(b);
+
+    const sortA =
+      Number(settingA.sort_order || 0);
+
+    const sortB =
+      Number(settingB.sort_order || 0);
+
+    if (sortA !== sortB) {
+      return sortB - sortA;
+    }
+
+    return a.localeCompare(
+      b,
+      undefined,
+      {
+        numeric: true,
+        sensitivity: "base"
+      }
+    );
+
+  })
+  .forEach(function(type){
 
   let rows =
     productTypeData[type] || [];
