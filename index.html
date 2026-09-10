@@ -26,7 +26,19 @@ rel="stylesheet">
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 
-  <title>Industrial LCD Display</title>
+<link
+  rel="icon"
+  type="image/jpeg"
+  href="https://jameslinc.github.io/twscreen-banner-pic/img/1789020467911_JP_500_500.jpg"
+>
+
+<link
+  rel="shortcut icon"
+  type="image/jpeg"
+  href="https://jameslinc.github.io/twscreen-banner-pic/img/1789020467911_JP_500_500.jpg"
+>
+
+<title>Industrial LCD Display</title>
   <script src="https://website-head-loader.lcdscreentek.workers.dev/head.js"></script>
 <style>
 :root{
@@ -243,6 +255,51 @@ body {
 .menu a:hover::after {
   width: 100%;
 }
+
+/* =====================================================
+   製品 MENU 下拉式選單
+===================================================== */
+.jps-menu-products-dropdown{position:relative;display:flex;align-items:center;}
+.jps-menu-products-dropdown>a{display:inline-flex;align-items:center;gap:7px;}
+.jps-menu-products-dropdown>a::before{content:"";width:6px;height:6px;margin-top:-3px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);order:2;transition:transform .25s ease;}
+.jps-menu-products-dropdown:hover>a::before,.jps-menu-products-dropdown:focus-within>a::before{transform:rotate(225deg) translate(-1px,-1px);}
+.jps-menu-products-submenu{position:absolute;z-index:10020;top:calc(100% + 7px);left:50%;width:340px;padding:9px;background:rgba(255,255,255,.98);border:1px solid rgba(38,103,154,.16);border-radius:14px;box-shadow:0 18px 44px rgba(25,72,108,.16),0 4px 12px rgba(25,72,108,.06);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,-8px);transition:opacity .22s ease,visibility .22s ease,transform .25s cubic-bezier(.16,1,.3,1);}
+.jps-menu-products-submenu::before{content:"";position:absolute;left:0;right:0;top:-10px;height:10px;}
+.jps-menu-products-dropdown:hover .jps-menu-products-submenu,.jps-menu-products-dropdown:focus-within .jps-menu-products-submenu{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0);}
+/* 點擊產品項目後，即使滑鼠仍停在「製品」附近，也先關閉下拉選單 */
+.jps-menu-products-dropdown.jps-menu-products-dropdown--closed .jps-menu-products-submenu{
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+  transform:translate(-50%,-8px) !important;
+}
+
+/* 點擊後即使滑鼠還停在「製品」上，也強制維持關閉 */
+.jps-menu-products-dropdown.jps-menu-products-dropdown--closed:hover .jps-menu-products-submenu,
+.jps-menu-products-dropdown.jps-menu-products-dropdown--closed:focus-within .jps-menu-products-submenu{
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+  transform:translate(-50%,-8px) !important;
+}
+
+.jps-menu-products-dropdown.jps-menu-products-dropdown--closed>a::before{
+  transform:rotate(45deg) !important;
+}
+
+.menu .jps-menu-products-submenu a{position:relative;display:flex;align-items:center;width:100%;min-height:42px;padding:10px 13px;color:#29465f;background:transparent;border-radius:9px;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans JP','Yu Gothic','Hiragino Kaku Gothic ProN',Meiryo,Arial,sans-serif;font-size:13px;font-weight:600;line-height:1.45;letter-spacing:.01em;white-space:normal;transition:color .2s ease,background .2s ease,padding-left .2s ease;}
+.menu .jps-menu-products-submenu a::after{display:none;}
+.menu .jps-menu-products-submenu a:hover,.menu .jps-menu-products-submenu a:focus{color:#1268aa;background:linear-gradient(90deg,#f2f8fd 0%,#f7fcfd 100%);padding-left:17px;outline:none;}
+.menu .jps-menu-products-submenu a+a{border-top:1px solid rgba(45,92,130,.08);}
+.menu .jps-menu-products-submenu a:first-child{color:#0b4f92;font-weight:800;}
+.jps-product-type-anchor{scroll-margin-top:150px;}
+@media(max-width:920px){.jps-menu-products-submenu{width:310px;}}
+@media(max-width:640px){.jps-menu-products-dropdown{flex:0 0 auto;}.jps-menu-products-submenu{position:fixed;top:auto;left:4vw;right:4vw;width:92vw;transform:translateY(-8px);}.jps-menu-products-dropdown:hover .jps-menu-products-submenu,.jps-menu-products-dropdown:focus-within .jps-menu-products-submenu{transform:translateY(0);}
+.jps-menu-products-dropdown.jps-menu-products-dropdown--closed .jps-menu-products-submenu{
+  transform:translateY(-8px) !important;
+}
+.menu .jps-menu-products-submenu a{min-height:40px;font-size:12px;}}
+
 /* =====================================================
    お問い合わせ 專用按鈕
 ===================================================== */
@@ -2323,125 +2380,213 @@ async function loadCompanyLogoSmall() {
 ========================================================= */
 
 function setupMainNavigation() {
+  const topbar=document.getElementById("topbarBox");
+  if(!topbar)return;
 
-  const topbar =
-    document.getElementById("topbarBox");
+  const navMap={company_a:"#brief1",company_b:"#products",company_c:"#solutions",company_d:"#why",company_e:"#rfq"};
 
-  if (!topbar) return;
+  Object.entries(navMap).forEach(function([key,target]){
+    const link=topbar.querySelector('[data-lang="'+key+'"]')||topbar.querySelector('#'+key)||topbar.querySelector('[data-key="'+key+'"]');
+    if(!link)return;
+    link.setAttribute("href",target);
+    link.removeAttribute("target");
+    link.removeAttribute("rel");
+    if(key==="company_e")link.classList.add("jps-menu-contact");
+  });
 
+  const originalMenuLinks=Array.from(topbar.querySelectorAll(".menu > a"));
+  const fallbackTargets=["#brief1","#products","#solutions","#why","#rfq"];
+  originalMenuLinks.slice(0,5).forEach(function(link,index){
+    link.setAttribute("href",fallbackTargets[index]);
+    link.removeAttribute("target");
+    link.removeAttribute("rel");
+    if(index===4)link.classList.add("jps-menu-contact");
+  });
 
-  /* -----------------------------------------
-     需要前往的位置
-  ----------------------------------------- */
+  let productLink=topbar.querySelector('[data-lang="company_b"]')||topbar.querySelector('#company_b')||topbar.querySelector('[data-key="company_b"]');
+  if(!productLink)productLink=originalMenuLinks[1]||null;
 
-  const navMap = {
-    company_a: "#brief1",
-    company_b: "#products",
-    company_c: "#solutions",
-    company_d: "#why",
-    company_e: "#rfq"
-  };
+  if(productLink&&!productLink.closest(".jps-menu-products-dropdown")){
+    productLink.setAttribute("href","#products");
+    productLink.setAttribute("aria-haspopup","true");
+    productLink.setAttribute("aria-expanded","false");
 
+    const wrapper=document.createElement("div");
+    wrapper.className="jps-menu-products-dropdown";
 
-  /* -----------------------------------------
-     先嘗試依 company_a ~ company_e 找按鈕
-  ----------------------------------------- */
+    const submenu=document.createElement("div");
+    submenu.className="jps-menu-products-submenu";
+    submenu.setAttribute("aria-label","製品メニュー");
+    submenu.innerHTML=`
+      <a href="#products">製品一覧・製品総覧</a>
+      <a href="#product-type-special">特殊用途向けディスプレイ</a>
+      <a href="#product-type-pcapair">PCAP静電容量式タッチパネル</a>
+      <a href="#product-type-rtpair">RTP抵抗膜式タッチパネル</a>
+      <a href="#product-type-adboardkits">産業用ADボードキット</a>
+      <a href="#product-type-tftlcd">産業用TFT-LCDパネル</a>
+    `;
 
-  Object.entries(navMap).forEach(
-    function([key, target]) {
+    productLink.parentNode.insertBefore(wrapper,productLink);
+    wrapper.appendChild(productLink);
+    wrapper.appendChild(submenu);
 
-      const link =
-        topbar.querySelector(
-          '[data-lang="' + key + '"]'
-        ) ||
-        topbar.querySelector(
-          "#" + key
-        ) ||
-        topbar.querySelector(
-          '[data-key="' + key + '"]'
-        );
+    /* =====================================================
+       下拉選單重新開啟規則
+       點擊後不能因 focus / hover 馬上又打開。
+       必須先真正把滑鼠移出「製品」區域，再次移入才可重新開啟。
+    ===================================================== */
+    wrapper.dataset.jpsCanReopen = "1";
 
-      if (!link) return;
+    wrapper.addEventListener("mouseenter",function(){
 
-      link.setAttribute(
-        "href",
-        target
-      );
-
-      link.removeAttribute(
-        "target"
-      );
-
-      link.removeAttribute(
-        "rel"
-      );
-
-
-      /* company_e = お問い合わせ */
-      if (key === "company_e") {
-
-        link.classList.add(
-          "jps-menu-contact"
-        );
-
-      }
-
-    }
-  );
-
-
-  /* -----------------------------------------
-     如果 Topbar 沒有 company_a 的 attribute，
-     再依照 MENU 原本順序設定
-  ----------------------------------------- */
-
-  const menuLinks =
-    Array.from(
-      topbar.querySelectorAll(
-        ".menu a"
-      )
-    );
-
-
-  const fallbackTargets = [
-    "#brief1",
-    "#products",
-    "#solutions",
-    "#why",
-    "#rfq"
-  ];
-
-
-  menuLinks
-    .slice(0, 5)
-    .forEach(
-      function(link, index) {
-
-        link.setAttribute(
-          "href",
-          fallbackTargets[index]
-        );
-
-        link.removeAttribute(
-          "target"
-        );
-
-        link.removeAttribute(
-          "rel"
-        );
-
-
-        if (index === 4) {
-
-          link.classList.add(
-            "jps-menu-contact"
-          );
-
+      if (
+        wrapper.classList.contains(
+          "jps-menu-products-dropdown--closed"
+        )
+      ) {
+        if (wrapper.dataset.jpsCanReopen !== "1") {
+          return;
         }
 
+        wrapper.classList.remove(
+          "jps-menu-products-dropdown--closed"
+        );
       }
-    );
 
+      productLink.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+    });
+
+    wrapper.addEventListener("mouseleave",function(){
+
+      productLink.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+      /* 只有滑鼠真的離開後，才允許下一次移入重新開啟 */
+      if (
+        wrapper.classList.contains(
+          "jps-menu-products-dropdown--closed"
+        )
+      ) {
+        wrapper.dataset.jpsCanReopen = "1";
+      }
+
+    });
+
+
+    function closeProductDropdownImmediately(){
+
+      wrapper.dataset.jpsCanReopen = "0";
+
+      wrapper.classList.add(
+        "jps-menu-products-dropdown--closed"
+      );
+
+      productLink.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+      /* 關鍵：移除剛剛點擊連結留下的 focus-within 狀態 */
+      if (
+        document.activeElement &&
+        typeof document.activeElement.blur === "function"
+      ) {
+        document.activeElement.blur();
+      }
+
+      /* 再補一次，避免 smooth scroll / sticky topbar 重算時重新顯示 */
+      requestAnimationFrame(function(){
+        wrapper.classList.add(
+          "jps-menu-products-dropdown--closed"
+        );
+      });
+
+      setTimeout(function(){
+        wrapper.classList.add(
+          "jps-menu-products-dropdown--closed"
+        );
+      },80);
+
+    }
+
+
+    /* =====================================================
+       點擊產品下拉項目後
+       1. 下拉選單立即消失
+       2. 頁面平滑移動
+       3. Top Bar 維持顯示約 2.6 秒
+       4. 之後自動收起
+    ===================================================== */
+    submenu.querySelectorAll("a").forEach(function(subLink){
+
+      subLink.addEventListener("click",function(){
+
+        closeProductDropdownImmediately();
+
+        const topbarBox =
+          document.getElementById("topbarBox");
+
+        window.JPS_TOPBAR_HOLD_UNTIL =
+          Date.now() + 2600;
+
+        if (topbarBox) {
+          topbarBox.classList.remove(
+            "topbar-hidden"
+          );
+        }
+
+        if (window.JPS_TOPBAR_HIDE_TIMER) {
+          clearTimeout(
+            window.JPS_TOPBAR_HIDE_TIMER
+          );
+        }
+
+        window.JPS_TOPBAR_HIDE_TIMER =
+          setTimeout(function(){
+
+            window.JPS_TOPBAR_HOLD_UNTIL = 0;
+
+            if (
+              topbarBox &&
+              window.scrollY > 10
+            ) {
+              topbarBox.classList.add(
+                "topbar-hidden"
+              );
+            }
+
+          },2600);
+
+      });
+
+    });
+
+
+    /* 直接點「製品」主按鈕時，也採用相同行為 */
+    productLink.addEventListener("click",function(){
+
+      closeProductDropdownImmediately();
+
+      const topbarBox =
+        document.getElementById("topbarBox");
+
+      window.JPS_TOPBAR_HOLD_UNTIL =
+        Date.now() + 2600;
+
+      if (topbarBox) {
+        topbarBox.classList.remove(
+          "topbar-hidden"
+        );
+      }
+
+    });
+  }
 }
 
 
@@ -4096,6 +4241,14 @@ const pageRows =
     normalPageRows
   );
 
+    // =====================================================
+    // product_type Anchor：供上方「製品」下拉式選單跳轉
+    // =====================================================
+    html +=
+      '<section id="product-type-' + escapeAttr(type) +
+      '" class="jps-product-type-anchor" data-product-type="' +
+      escapeAttr(type) + '">';
+
     // =========================
 // TABLE_TITLE
 // 同一個 product_type 取第一個有文字的值
@@ -4502,6 +4655,8 @@ html += escapeHtml(
 
       html += '</div>';
     }
+
+    html += '</section>';
 
  
   });
@@ -5527,6 +5682,26 @@ loadBuyerInfoFromServer();
 
     const currentScrollY =
       window.scrollY;
+
+
+    /* =====================================================
+       點擊產品下拉選單後的暫時顯示保護
+       Smooth Scroll 過程中，不要立刻把 Top Bar 收掉
+    ===================================================== */
+    if (
+      window.JPS_TOPBAR_HOLD_UNTIL &&
+      Date.now() < window.JPS_TOPBAR_HOLD_UNTIL
+    ) {
+
+      topbarBox.classList.remove(
+        "topbar-hidden"
+      );
+
+      lastScrollY = currentScrollY;
+      ticking = false;
+
+      return;
+    }
 
 
     /* 回到最上方一定顯示 */
