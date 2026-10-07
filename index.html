@@ -2834,9 +2834,9 @@ if (pageSize === 0) {
   box.innerHTML = "";
   return;
 }
+
 let filtered =
   allData.slice();
-
 
 // =========================
 // KEY_FIELD 快速分類
@@ -2872,28 +2872,31 @@ if (
 // =========================
 // 關鍵字搜尋
 // =========================
-
 if (productKeyword) {
 
   filtered =
     filtered.filter(function(row) {
 
-      const text = [
-        row.brand,
-        row.panel_model,
-        row.size,
-        row.resolution,
-        row.brightness,
-        row.signal_interface
-      ]
-      .join(" ")
-      .toLowerCase();
+      // =================================================
+      // 搜尋 PANEL 這筆資料的所有欄位
+      // =================================================
+
+      const text =
+        Object.values(row)
+          .map(function(value) {
+            return String(
+              value ?? ""
+            );
+          })
+          .join(" ")
+          .toLowerCase();
 
       return text.includes(
         productKeyword
       );
 
     });
+
 }
 
   // Keep selected RFQ products visible and pinned to the top,
@@ -3087,11 +3090,28 @@ if (!allPanelCols.length) {
 if (panelTableTitle) {
   html += panelTableTitle;
 }
+
+
+// =====================================================
+// LCD PANEL DATABASE 搜尋框
+// =====================================================
+
+html +=
+  productSizeFilterHtml(
+    window.productSize || ""
+  );
+
+
+// =====================================================
+// 原本的 KEY_FIELD 分類
+// =====================================================
+
 html +=
   productKeyFieldFilterHtml(
     "panel",
     allData
   );
+
 // =====================================================
 // 有選 RFQ 時顯示提示
 // =====================================================
@@ -4858,103 +4878,92 @@ function setProductKeyValue(value) {
   renderProductTable();
 }
   
-   function productSizeFilterHtml(activeSize) {
-  const allData = window.productAllRows || [];
+  function productSizeFilterHtml(activeSize) {
 
-  // 超過 13 個，改用關鍵字搜尋
-  if (allData.length > 13) {
+  const searchPlaceholder =
+    window.LANG?.search_placeholder ||
+    "型號・メーカー・サイズ・解像度で検索";
 
-    const searchPlaceholder =
-      window.LANG?.search_placeholder ||
-      "Search model / brand / size / resolution";
+  const searchButtonText =
+    window.LANG?.btn_search ||
+    "検索";
 
-    const searchButtonText =
-      window.LANG?.btn_search ||
-      "SEARCH";
+  return `
 
-    return `
-<div style="display:flex;gap:8px;margin:12px 0 14px;">
+<div style="margin:12px 0 14px;">
 
-  <input
-    id="productKeywordInput"
-    type="text"
-    placeholder="${escapeAttr(searchPlaceholder)}"
-    value="${escapeAttr(productKeyword || "")}"
+  <div
     style="
-      width:100%;
-      max-width:420px;
-      padding:10px 12px;
-      border:1px solid #34445f;
-      border-radius:8px;
-      background:#ffffff;
-      color:#000000;
-      font-size:16px;
-    "
-  >
-
-  <button
-    type="button"
-    onclick="searchProductKeyword()"
-    style="
-      padding:10px 18px;
-      border:0;
-      border-radius:8px;
-      background:#2f80ed;
-      color:#fff;
+      font-size:18px;
       font-weight:bold;
-      cursor:pointer;
+      margin-bottom:8px;
     "
   >
-    ${escapeHtml(searchButtonText)}
-  </button>
+    🔍 LCD PANEL DATABASE
+  </div>
+
+  <div
+    style="
+      display:flex;
+      gap:8px;
+    "
+  >
+
+    <input
+      id="productKeywordInput"
+      type="text"
+
+      placeholder="${escapeAttr(
+        searchPlaceholder
+      )}"
+
+      value="${escapeAttr(
+        productKeyword || ""
+      )}"
+
+      onkeydown="
+        if(event.key === 'Enter'){
+          searchProductKeyword();
+        }
+      "
+
+      style="
+        width:100%;
+        max-width:420px;
+        padding:10px 12px;
+        border:1px solid #34445f;
+        border-radius:8px;
+        background:#ffffff;
+        color:#000000;
+        font-size:16px;
+      "
+    >
+
+    <button
+      type="button"
+      onclick="searchProductKeyword()"
+
+      style="
+        padding:10px 18px;
+        border:0;
+        border-radius:8px;
+        background:#2f80ed;
+        color:#ffffff;
+        font-weight:bold;
+        cursor:pointer;
+      "
+    >
+      ${escapeHtml(
+        searchButtonText
+      )}
+    </button>
+
+  </div>
 
 </div>
+
 `;
 
-  }
-
-  const sizeMap = {};
-
-  allData.forEach(function(row) {
-    const size = normalizeSize(row.size || "");
-
-    if (size) {
-      sizeMap[size] = true;
-    }
-  });
-
-  const sizes = Object.keys(sizeMap).sort(function(a, b) {
-    const na = parseFloat(a);
-    const nb = parseFloat(b);
-
-    if (Number.isFinite(na) && Number.isFinite(nb)) {
-      return na - nb;
-    }
-
-    return a.localeCompare(b);
-  });
-
-  let html = '<div class="product-azbar">';
-
-  html +=
-    '<button type="button" class="' +
-    (activeSize === "" ? "active" : "") +
-    '" onclick="setProductSize(\'\')">ALL SIZE</button>';
-
-  sizes.forEach(function(size) {
-    html +=
-      '<button type="button" class="' +
-      (activeSize === size ? "active" : "") +
-      '" onclick="setProductSize(\'' +
-      escapeJs(size) +
-      '\')">' +
-      escapeHtml(size) +
-      '&quot;</button>';
-  });
-
-  html += '</div>';
-
-  return html;
 }
 
    function normalizeSize(v) {
