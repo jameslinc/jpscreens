@@ -1630,6 +1630,8 @@ let currentWebId =
   Number(window.CURRENT_WEB_ID || 0);
   
 let productKeyword = "";
+let productSearchStarted = false;
+
 
 async function loadBuyerInfoFromServer() {
   try {
@@ -3084,22 +3086,71 @@ if (!allPanelCols.length) {
     };
   });
 
- let html = "";
 
-// TABLE_TITLE 有文字才輸出
-if (panelTableTitle) {
-  html += panelTableTitle;
+let html = "";
+
+// 標題、搜尋框、搜尋按鈕同一 ROW
+
+
+html += `
+  <div style="
+    display:flex;
+    align-items:center;
+    flex-wrap:nowrap;
+    gap:12px;
+    width:100%;
+
+    margin:12px 0 14px;
+    padding:14px 18px;
+
+    background:#F1F6FB;
+    border:1px solid #DCE8F3;
+    border-radius:12px;
+  ">
+
+
+    <div style="
+      flex:0 0 auto;
+      white-space:nowrap;
+      margin:0;
+    ">
+      ${panelTableTitle || ""}
+    </div>
+
+    <div style="
+      flex:1 1 auto;
+      min-width:0;
+    ">
+      ${productSizeFilterHtml(
+        window.productSize || ""
+      )}
+    </div>
+
+  </div>
+`;
+
+
+
+// =====================================================
+// 尚未按搜尋：只顯示 LCD PANEL DATABASE 搜尋框
+// =====================================================
+
+
+if (!productSearchStarted) {
+
+  html += `
+    <div
+      id="otherProductTypeBox"
+      style="margin-top:22px;margin-bottom:22px;"
+    ></div>
+  `;
+
+  box.innerHTML = html;
+
+  renderOtherProductTypeTables();
+
+  return;
 }
-
-
-// =====================================================
-// LCD PANEL DATABASE 搜尋框
-// =====================================================
-
-html +=
-  productSizeFilterHtml(
-    window.productSize || ""
-  );
 
 
 // =====================================================
@@ -4878,93 +4929,71 @@ function setProductKeyValue(value) {
   renderProductTable();
 }
   
-  function productSizeFilterHtml(activeSize) {
+ 
+function productSizeFilterHtml(activeSize) {
 
   const searchPlaceholder =
     window.LANG?.search_placeholder ||
-    "型號・メーカー・サイズ・解像度で検索";
+    "型番・メーカー・サイズ・解像度で検索";
 
   const searchButtonText =
     window.LANG?.btn_search ||
     "検索";
 
   return `
-
-<div style="margin:12px 0 14px;">
-
-  <div
-    style="
-      font-size:18px;
-      font-weight:bold;
-      margin-bottom:8px;
-    "
-  >
-    🔍 LCD PANEL DATABASE
-  </div>
-
-  <div
-    style="
+    <div style="
       display:flex;
-      gap:8px;
-    "
-  >
+      align-items:center;
+      gap:10px;
+      margin:0;
+width:100%;
+flex-wrap:nowrap;
+    ">
 
-    <input
-      id="productKeywordInput"
-      type="text"
+      <input
+        id="productKeywordInput"
+        type="text"
+        placeholder="${escapeAttr(searchPlaceholder)}"
+        value="${escapeAttr(productKeyword || "")}"
+        onkeydown="
+          if(event.key === 'Enter'){
+            searchProductKeyword();
+          }
+        "
+        style="
+          flex:1;
+          min-width:0;
+          padding:8px 12px;
+          border:1px solid #34445f;
+          border-radius:8px;
+          background:#ffffff;
+          color:#000000;
+          font-size:14px;
+        "
+      >
 
-      placeholder="${escapeAttr(
-        searchPlaceholder
-      )}"
+      <button
+        type="button"
+        onclick="searchProductKeyword()"
+        style="
+          padding:8px 16px;
+          border:0;
+          border-radius:8px;
+          background:#2f80ed;
+          color:#ffffff;
+          font-weight:bold;
+          white-space:nowrap;
+          cursor:pointer;
+        "
+      >
+        ${escapeHtml(searchButtonText)}
+      </button>
 
-      value="${escapeAttr(
-        productKeyword || ""
-      )}"
-
-      onkeydown="
-        if(event.key === 'Enter'){
-          searchProductKeyword();
-        }
-      "
-
-      style="
-        width:100%;
-        max-width:420px;
-        padding:10px 12px;
-        border:1px solid #34445f;
-        border-radius:8px;
-        background:#ffffff;
-        color:#000000;
-        font-size:16px;
-      "
-    >
-
-    <button
-      type="button"
-      onclick="searchProductKeyword()"
-
-      style="
-        padding:10px 18px;
-        border:0;
-        border-radius:8px;
-        background:#2f80ed;
-        color:#ffffff;
-        font-weight:bold;
-        cursor:pointer;
-      "
-    >
-      ${escapeHtml(
-        searchButtonText
-      )}
-    </button>
-
-  </div>
-
-</div>
-
-`;
-
+    </div>
+  `;
 }
+
+
 
    function normalizeSize(v) {
   return String(v || "")
@@ -4989,6 +5018,8 @@ function setProductKeyword(value) {
   renderProductTable();
 }
 
+
+
 function searchProductKeyword() {
 
   const input =
@@ -5003,8 +5034,16 @@ function searchProductKeyword() {
 
   window.productPage = 1;
 
+  // 空白搜尋：隱藏 PANEL LIST
+  // 有關鍵字：顯示搜尋結果
+  productSearchStarted =
+    productKeyword.length > 0;
+
   renderProductTable();
+
 }
+
+
 
 function setProductSize(size) {
   window.productSize = size || "";
