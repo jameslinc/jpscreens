@@ -1,6 +1,6 @@
 ﻿<!doctype html>
 <html lang="ja">
-<head>
+<head> 
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -3135,7 +3135,6 @@ html += `
 // 尚未按搜尋：只顯示 LCD PANEL DATABASE 搜尋框
 // =====================================================
 
-
 if (!productSearchStarted) {
 
   html += `
@@ -3151,8 +3150,6 @@ if (!productSearchStarted) {
 
   return;
 }
-
-
 // =====================================================
 // 原本的 KEY_FIELD 分類
 // =====================================================
@@ -3215,15 +3212,24 @@ html += '</div>';
 html += '</div>';
 */
   if (!pageRows.length) {
-    html +=
-  '<div style="padding:20px;background:#fff;color:#000;border-radius:12px;">' +
-  escapeHtml(
-    langText("no_products", "No products.")
-  ) +
-  '</div>';
-    box.innerHTML = html;
-    return;
-  }
+
+  html +=
+    '<div style="padding:20px;background:#fff;color:#000;border-radius:12px;">' +
+    escapeHtml(
+      langText("no_products", "No products.")
+    ) +
+    '</div>';
+
+  html +=
+    '<div id="otherProductTypeBox" ' +
+    'style="margin-top:22px;margin-bottom:22px;"></div>';
+
+  box.innerHTML = html;
+
+  renderOtherProductTypeTables();
+
+  return;
+}
 
   html += '<div style="overflow-x:auto;">';
   html += '<table style="width:100%;border-collapse:collapse;background:#fff;color:#000;font-family:\'Barlow Condensed\',sans-serif;letter-spacing:1px;">';
@@ -4020,6 +4026,8 @@ function renderOtherProductTypeTables(){
     document.getElementById("otherProductTypeBox");
 
   if (!box) return;
+
+    
 
   const productTypeData =
     window.productTypeData || {};
