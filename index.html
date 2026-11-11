@@ -855,6 +855,40 @@ body {
   display:block;
 }
 
+/* Banner 數字頁碼 */
+#bannerPager {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 0;
+  background: #ffffff;
+}
+
+#bannerPager button {
+  min-width: 34px;
+  height: 34px;
+  padding: 5px 10px;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #333333;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#bannerPager button.active {
+  background: #2f80ed;
+  color: #ffffff;
+  border-color: #2f80ed;
+}
+
+#bannerPager button:hover {
+  border-color: #2f80ed;
+}
+
 .slide img{
   width:100%;
   height:auto;
@@ -1216,6 +1250,92 @@ body {
   font-size:12px;
 }
 
+/* =====================================================
+   Floating INQUIRY
+   右上角浮動詢價視窗
+===================================================== */
+
+#floatingInquiryBox {
+  position: fixed;
+  top: 165px;
+  right: 20px;
+  z-index: 10001;
+
+  width: 360px;
+  max-width: calc(100vw - 30px);
+  max-height: calc(100vh - 130px);
+
+  overflow-y: auto;
+
+  background: #ffffff;
+  color: #222222;
+
+  border: 1px solid #dce8f3;
+  border-radius: 14px;
+
+  box-shadow: 0 8px 30px rgba(0,0,0,0.16);
+
+  display: none;
+}
+
+/* 浮動 INQUIRY 預設只顯示按鈕 */
+#floatingInquiryBox {
+  display: block;
+  width: 280px;
+  overflow-x: hidden;
+}
+
+#floatingInquiryBox.open {
+  width: 360px;
+}
+
+/* 手機版 */
+@media (max-width: 640px) {
+  #floatingInquiryBox {
+    top: 115px;
+    right: 10px;
+    width: 320px;
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 135px);
+  }
+}
+
+/* 浮動 INQUIRY 客戶欄位縮小高度 */
+#floatingInquiryBox .floating-customer-fields input {
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  padding: 5px 8px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+#floatingInquiryBox .floating-customer-fields label {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+
+/* 浮動 INQUIRY：標題與內容分成兩個區塊 */
+#floatingInquiryBox {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  overflow-x: hidden;
+}
+
+#floatingInquiryToggle {
+  border-radius: 12px;
+}
+
+#floatingInquiryContent {
+  margin-top: 6px;
+  background: #ffffff;
+  border: 1px solid #dce8f3;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
 </style>
 </head>
 <body> 
@@ -1233,9 +1353,186 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!--
 -->
 
+<!-- =====================================================
+     Floating INQUIRY
+     右上角浮動詢價表單
+===================================================== -->
+<div id="floatingInquiryBox">
+
+<div
+  id="floatingInquiryToggle"
+  onclick="toggleFloatingInquiry()"
+  style="
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+    padding:12px;
+    background:#197ac2;
+    color:#ffffff;
+    border-radius:12px;
+    font-size:11px;
+    font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+  "
+>
+  <button
+    type="button"
+    id="floatingClearAll"
+    onclick="event.stopPropagation();clearFloatingInquiryAll();"
+    style="
+      width:auto;
+      flex-shrink:0;
+      padding:5px 8px;
+      background:transparent;
+      color:#ffffff;
+      border:1px solid #ffffff;
+      border-radius:5px;
+      font-size:11px;
+      font-weight:600;
+      cursor:pointer;
+    "
+  >
+    CLEAR ALL
+  </button>
+
+  <span>
+    🛒 INQUIRY (<span id="floatingInquiryCount">0</span>)
+  </span>
+
+  <span
+    id="floatingInquiryArrow"
+    style="margin-left:auto;"
+  >▼</span>
+</div>
+
+  <div
+    id="floatingInquiryContent"
+    style="display:none;padding:14px;"
+  >
+    <div id="floatingInquiryList">
+      No RFQ items selected.
+    </div>
+
+  
+
+<!-- 浮動 INQUIRY 留言 -->
+<div style="margin-top:15px;">
+
+  <label
+    for="floatingInquiryMessage"
+    style="
+      display:block;
+      margin-bottom:6px;
+      color:#333;
+      font-weight:bold;
+    "
+  >
+    Message
+  </label>
+
+  <textarea
+    id="floatingInquiryMessage"
+    placeholder="Your message..."
+    style="
+      width:100%;
+      min-height:100px;
+      padding:10px;
+      border:1px solid #ccc;
+      border-radius:8px;
+      background:#fff;
+      color:#222;
+      resize:vertical;
+    "
+  ></textarea>
+
+</div>
+
+<!-- 浮動 INQUIRY 客戶資料 -->
+<div class="floating-customer-fields"
+     style="margin-top:12px;display:grid;gap:7px;">
+
+  <div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
+    <label for="floatingCompany">Company *</label>
+    <input id="floatingCompany" type="text" placeholder="Company">
+  </div>
+
+  <div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
+    <label for="floatingContact">Contact *</label>
+    <input id="floatingContact" type="text" placeholder="Contact Person">
+  </div>
+
+  <div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
+    <label for="floatingEmail">Email *</label>
+    <input id="floatingEmail" type="email" placeholder="Email">
+  </div>
+
+  <div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
+    <label for="floatingTel">Phone</label>
+    <input id="floatingTel" type="tel" placeholder="Phone">
+  </div>
+
+</div>
+
+<!-- 浮動 INQUIRY Privacy + SEND RFQ -->
+<div style="margin-top:12px;">
+
+  <label style="
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    cursor:pointer;
+  ">
+    <input
+      type="checkbox"
+      id="floatingAgreePrivacy"
+      style="width:auto;margin:0;"
+    >
+
+    <a href="#privacy"
+       style="color:#197ac2;text-decoration:underline;">
+      Privacy Policy
+    </a>
+    に同意します
+  </label>
+
+  <button
+    type="button"
+    onclick="sendFloatingInquiry()"
+    style="
+      width:100%;
+      margin-top:12px;
+      padding:10px;
+      background:#00a8bd;
+      color:#ffffff;
+      border:0;
+      border-radius:8px;
+      font-size:14px;
+      font-weight:bold;
+      cursor:pointer;
+    "
+  >
+    SEND RFQ
+  </button>
+
+  <div
+    id="floatingRfqStatus"
+    style="margin-top:8px;font-size:12px;"
+  ></div>
+
+</div>
+
+  </div>
+
+</div>
+
 <div class="slider" id="bannerSlider">
   <div style="padding:20px;">Loading banners...</div>
 </div>
+
+<div id="bannerPager"></div>
 
   <main id="top" class="hero">
     <div class="container heroGrid">
@@ -2000,16 +2297,68 @@ await loadProductTable();
 `;
     }).join("");
 
-    const slides = slider.querySelectorAll(".slide");
-    let index = 0;
+   // =====================================================
+// Banner 數字頁碼 + 點擊切換 + 自動輪播
+// =====================================================
 
-    if (slides.length > 1) {
-      setInterval(() => {
-        slides[index].classList.remove("active");
-        index = (index + 1) % slides.length;
-        slides[index].classList.add("active");
-      }, 5000);
+const slides = slider.querySelectorAll(".slide");
+const pager = document.getElementById("bannerPager");
+
+let index = 0;
+
+// 切換 Banner
+function showBanner(page) {
+
+  slides[index].classList.remove("active");
+
+  index = page;
+
+  slides[index].classList.add("active");
+
+  // 更新目前頁碼顏色
+  pager.querySelectorAll("button").forEach(
+    (btn, i) => {
+      btn.classList.toggle("active", i === index);
     }
+  );
+}
+
+// 自動產生數字頁碼
+if (pager) {
+
+  pager.innerHTML = "";
+
+  slides.forEach((slide, i) => {
+
+    const btn = document.createElement("button");
+
+    btn.type = "button";
+    btn.textContent = i + 1;
+
+    if (i === 0) {
+      btn.classList.add("active");
+    }
+
+    btn.addEventListener("click", () => {
+      showBanner(i);
+    });
+
+    pager.appendChild(btn);
+
+  });
+
+}
+
+// 保留每 5 秒自動輪播
+if (slides.length > 1) {
+
+  setInterval(() => {
+
+    showBanner((index + 1) % slides.length);
+
+  }, 5000);
+
+}
 
     await loadWebCont();
 await loadCompanyBrief();
@@ -5100,6 +5449,62 @@ function syncInquiryButtonsAfterRender() {
   });
 }
 
+// =====================================================
+// 產品列表 QTY 修改 → 同步浮動 INQUIRY
+// =====================================================
+document.addEventListener("change", function(e) {
+
+  const input = e.target;
+
+  if (!input.matches(".inquiry-qty")) return;
+
+  const td = input.closest("td");
+  if (!td) return;
+
+  const btn = td.querySelector("button[data-in-cart='1']");
+  if (!btn) return;
+
+  let productKey = btn.getAttribute("data-key");
+
+  // PANEL 產品使用 data-index
+  if (!productKey) {
+
+    const index = Number(btn.getAttribute("data-index"));
+
+    const data = window.inquiryProductRows?.[index];
+
+    productKey = data?.productKey || "";
+  }
+
+  if (!productKey) return;
+
+  const item = inquiryCart.find(function(x) {
+    return String(x.productKey || "") === productKey;
+  });
+
+  if (!item) return;
+
+  const qty = Number(input.value);
+
+  if (!Number.isInteger(qty) || qty <= 0) {
+    alert("QTY MUST BE A POSITIVE INTEGER");
+    input.value = item.qty;
+    return;
+  }
+
+  // 更新購物車數量
+  item.qty = String(qty);
+
+  // 儲存
+  saveInquiryCart();
+
+  // 更新 RFQ 留言
+updateInquiryRemark();
+
+// 重新顯示右上角最新 QTY
+updateFloatingInquiryCount();
+
+});
 
 
 async function toggleProductDetail(a) {
@@ -5628,7 +6033,13 @@ function updateInquiryRemark() {
     }
   }
 
-renderRfqCartDisplay();
+  renderRfqCartDisplay();
+
+  // 同步右上角浮動 INQUIRY
+  if (typeof updateFloatingInquiryCount === "function") {
+    updateFloatingInquiryCount();
+  }
+
 }
 
 async function loadCompanyBrief() {
@@ -5977,6 +6388,454 @@ s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
 <!--End of Tawk.to Script-->
+
+<script>
+
+// 展開 / 收合浮動 INQUIRY
+function toggleFloatingInquiry() {
+
+  const box =
+    document.getElementById("floatingInquiryBox");
+
+  const content =
+    document.getElementById("floatingInquiryContent");
+
+  const arrow =
+    document.getElementById("floatingInquiryArrow");
+
+  const isOpen =
+    box.classList.toggle("open");
+
+  content.style.display =
+    isOpen ? "block" : "none";
+
+  arrow.textContent =
+    isOpen ? "▲" : "▼";
+
+}
+
+// =====================================================
+// 清除全部 INQUIRY 產品與 Message
+// =====================================================
+function clearFloatingInquiryAll() {
+
+  if (!confirm("Clear all INQUIRY items and Message?")) {
+    return;
+  }
+
+  // 清除全部詢價產品及儲存資料
+  clearInquiryCart(false);
+
+  // 清除上下兩個 Message
+  document.getElementById("remark").value = "";
+  document.getElementById("floatingInquiryMessage").value = "";
+
+  // 更新產品列表與浮動 INQUIRY
+  renderProductTable();
+  renderOtherProductTypeTables();
+  updateInquiryRemark();
+  updateFloatingInquiryCount();
+
+}
+
+function updateFloatingInquiryCount() {
+
+  const count =
+    document.getElementById("floatingInquiryCount");
+
+  const list =
+    document.getElementById("floatingInquiryList");
+
+  if (!count || !list) return;
+
+  const items =
+    Array.isArray(inquiryCart) ? inquiryCart : [];
+
+  count.textContent = items.length;
+
+
+  // 有 INQUIRY 產品時，CLEAR ALL 變橘色
+const clearBtn =
+  document.getElementById("floatingClearAll");
+
+if (clearBtn) {
+  clearBtn.style.background =
+    items.length > 0 ? "#f59e0b" : "transparent";
+}
+
+  if (items.length === 0) {
+    list.textContent = "No RFQ items selected.";
+    return;
+  }
+
+  list.innerHTML = "";
+
+  items.forEach(function(item, index) {
+
+    const row = document.createElement("div");
+
+    row.style.cssText =
+      "padding:10px 0;border-bottom:1px solid #ddd;";
+
+    const model = document.createElement("div");
+    model.style.fontWeight = "bold";
+    model.textContent = item.panel_model || "";
+const details = document.createElement("div");
+
+details.style.cssText =
+  "font-size:12px;color:#555;margin:8px 0;";
+
+const brand = document.createElement("span");
+brand.textContent = (item.brand || "") + " | QTY: ";
+
+const qtyInput = document.createElement("input");
+
+qtyInput.type = "number";
+qtyInput.min = "1";
+qtyInput.step = "1";
+qtyInput.value = item.qty || "";
+
+qtyInput.style.cssText =
+  "width:90px;padding:6px;" +
+  "border:1px solid #ccc;" +
+  "border-radius:6px;" +
+  "background:#fff;color:#222;";
+
+qtyInput.addEventListener("change", function() {
+  changeFloatingInquiryQty(index, qtyInput.value);
+});
+qtyInput.dataset.productKey = item.productKey || "";
+
+// 讓浮動 QTY 與 inquiryCart 保持一致
+qtyInput.value = String(
+  inquiryCart[index]?.qty || ""
+);
+
+details.appendChild(brand);
+details.appendChild(qtyInput);
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "DELETE";
+    remove.style.cssText =
+      "padding:5px 12px;background:#d32f2f;" +
+      "color:white;border:0;border-radius:6px;" +
+      "cursor:pointer;";
+
+    remove.onclick = function() {
+      deleteRfqCartItem(index);
+    };
+// QTY 與 DELETE 同一行
+details.style.display = "flex";
+details.style.alignItems = "center";
+details.style.gap = "6px";
+details.style.width = "100%";
+
+// DELETE 靠最右邊
+remove.style.marginLeft = "auto";
+remove.style.flexShrink = "0";
+
+// 型號第一行
+row.appendChild(model);
+
+// QTY、DELETE 第二行
+details.appendChild(remove);
+row.appendChild(details);
+
+list.appendChild(row);
+
+  });
+
+  // 依照 productKey 更新右上角 QTY
+list.querySelectorAll('input[data-product-key]').forEach(function(input) {
+
+  const key = input.dataset.productKey;
+
+  const cartItem = inquiryCart.find(function(item) {
+    return String(item.productKey || "") === key;
+  });
+
+  if (cartItem) {
+    input.value = cartItem.qty || "";
+  }
+
+});
+
+
+}
+
+// =====================================================
+// 浮動 INQUIRY 修改產品數量
+// =====================================================
+function changeFloatingInquiryQty(index, value) {
+
+  const qty = Number(value);
+
+  if (
+    !Number.isFinite(qty) ||
+    qty <= 0
+  ) {
+    alert("QTY MUST > 0");
+    updateFloatingInquiryCount();
+    return;
+  }
+
+  if (!inquiryCart[index]) return;
+
+  inquiryCart[index].qty = String(value).trim();
+
+  // 儲存到原本的 inquiry_cart
+  saveInquiryCart();
+
+  // 更新下方 RFQ 留言內容
+  updateInquiryRemark();
+
+  // 同步產品列表
+  // 同步產品列表
+renderProductTable();
+renderOtherProductTypeTables();
+
+// 確保重新產生的 QTY 欄位顯示最新數量
+document.querySelectorAll(
+  'button[data-in-cart="1"]'
+).forEach(function(btn) {
+
+  const key =
+    btn.getAttribute("data-key");
+
+  if (!key) return;
+
+  const item =
+    inquiryCart.find(function(x) {
+      return String(x.productKey || "") === key;
+    });
+
+  if (!item) return;
+
+  const td = btn.closest("td");
+  const qtyInput =
+    td ? td.querySelector(".inquiry-qty") : null;
+
+  if (qtyInput) {
+    qtyInput.value = item.qty || "";
+  }
+
+});
+
+}
+
+// =====================================================
+// Floating INQUIRY 客戶資料雙向同步
+// =====================================================
+function syncFloatingCustomerFields() {
+
+  const fields = [
+    ["floatingCompany", "company"],
+    ["floatingContact", "ctt_person"],
+    ["floatingEmail", "email"],
+    ["floatingTel", "tel"]
+  ];
+
+  fields.forEach(function(pair) {
+
+    const floating = document.getElementById(pair[0]);
+    const original = document.getElementById(pair[1]);
+
+    if (!floating || !original) return;
+
+    // 初始化：原本 RFQ → 浮動 INQUIRY
+    floating.value = original.value;
+
+    // 浮動 INQUIRY → 原本 RFQ
+    floating.addEventListener("input", function() {
+      original.value = floating.value;
+    });
+
+    // 原本 RFQ → 浮動 INQUIRY
+    original.addEventListener("input", function() {
+      floating.value = original.value;
+    });
+
+  });
+
+}
+
+// =====================================================
+// 浮動 INQUIRY Privacy Policy 雙向同步
+// =====================================================
+function syncFloatingPrivacy() {
+
+  const floating =
+    document.getElementById("floatingAgreePrivacy");
+
+  const original =
+    document.getElementById("agree_privacy");
+
+  if (!floating || !original) return;
+
+  // 初始狀態
+  floating.checked = original.checked;
+
+  // 右上角 → 下方 RFQ
+  floating.addEventListener("change", function() {
+    original.checked = floating.checked;
+  });
+
+  // 下方 RFQ → 右上角
+  original.addEventListener("change", function() {
+    floating.checked = original.checked;
+  });
+
+}
+
+window.addEventListener("load", function() {
+  syncFloatingPrivacy();
+});
+
+// =====================================================
+// 浮動 INQUIRY 送出 RFQ
+// =====================================================
+async function sendFloatingInquiry() {
+
+  const floatingPrivacy =
+    document.getElementById("floatingAgreePrivacy");
+
+  const originalPrivacy =
+    document.getElementById("agree_privacy");
+
+  const status =
+    document.getElementById("floatingRfqStatus");
+
+  const originalStatus =
+    document.getElementById("msg");
+
+  if (!floatingPrivacy || !originalPrivacy) return;
+
+  // 同步隱私權勾選狀態
+  originalPrivacy.checked = floatingPrivacy.checked;
+
+  if (!floatingPrivacy.checked) {
+    alert("Please agree to the Privacy Policy.");
+    return;
+  }
+
+  // 確保浮動欄位資料寫入原本 RFQ
+  const fields = [
+    ["floatingCompany", "company"],
+    ["floatingContact", "ctt_person"],
+    ["floatingEmail", "email"],
+    ["floatingTel", "tel"]
+  ];
+
+  fields.forEach(function(pair) {
+    const floating = document.getElementById(pair[0]);
+    const original = document.getElementById(pair[1]);
+
+    if (floating && original) {
+      original.value = floating.value;
+    }
+  });
+
+  // 使用原本的 RFQ 送出流程
+  await sendData();
+
+  // 顯示原本的送出結果
+  if (status && originalStatus) {
+    status.textContent = originalStatus.innerText;
+    status.style.color = originalStatus.style.color;
+  }
+
+// 只有 RFQ 送出成功，才清空浮動欄位
+if (
+  originalStatus &&
+  originalStatus.innerText.includes(
+    "We have got your message"
+  )
+) {
+
+  [
+    "floatingCompany",
+    "floatingContact",
+    "floatingEmail",
+    "floatingTel",
+    "floatingInquiryMessage"
+  ].forEach(function(id) {
+
+    const input = document.getElementById(id);
+
+    if (input) {
+      input.value = "";
+    }
+
+  });
+
+  floatingPrivacy.checked = false;
+  originalPrivacy.checked = false;
+
+  // 更新右上角產品清單與數量
+  updateFloatingInquiryCount();
+
+}
+
+}
+
+
+// 頁面載入後初始化同步
+window.addEventListener("load", function() {
+
+  syncFloatingCustomerFields();
+
+});
+
+// =====================================================
+// 浮動 INQUIRY Message 與原本 RFQ Message 同步
+// =====================================================
+(function () {
+
+  const floating =
+    document.getElementById("floatingInquiryMessage");
+
+  const original =
+    document.getElementById("remark");
+
+  if (!floating || !original) return;
+
+  // 原本 RFQ 留言 → 浮動留言
+  function syncToFloating() {
+    floating.value = getUserRemarkOnly(original.value);
+  }
+
+  // 浮動留言 → 原本 RFQ 留言
+  floating.addEventListener("input", function () {
+
+    const inquiryText = getInquiryText();
+
+    original.value =
+      floating.value +
+      (inquiryText ? "\n\n" + inquiryText : "");
+
+  });
+
+  // 原本 RFQ 留言 → 浮動留言
+  original.addEventListener("input", function () {
+    syncToFloating();
+  });
+
+  // 第一次載入時同步
+  syncToFloating();
+
+})();
+
+// 讀取既有 RFQ 資料
+window.addEventListener("load", function() {
+
+  loadInquiryCart();
+
+  updateInquiryRemark();
+
+});
+
+</script>
 
 </body>
 </html>
