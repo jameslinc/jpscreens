@@ -1330,7 +1330,7 @@ body {
 
 #floatingInquiryContent {
   margin-top: 6px;
-  background: #ffffff;
+  background: #eaf4ff;
   border: 1px solid #dce8f3;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.12);
@@ -1397,9 +1397,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     CLEAR ALL
   </button>
 
-  <span>
-    🛒 INQUIRY (<span id="floatingInquiryCount">0</span>)
-  </span>
+ 🛒 INQUIRY
+<span
+  id="floatingInquiryCount"
+  style="
+    display:none;
+    align-items:center;
+    justify-content:center;
+    min-width:22px;
+    height:22px;
+    padding:0 5px;
+    box-sizing:border-box;
+    margin-left:5px;
+    border-radius:999px;
+    background:#ef4444;
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+    vertical-align:middle;
+  "
+>0</span>
 
   <span
     id="floatingInquiryArrow"
@@ -5885,7 +5902,29 @@ function addInquiry(item) {
   saveInquiryCart();
   updateInquiryRemark();
 
+  // 成功加入第一個產品時，自動展開
+  if (inquiryCart.length === 1) {
+    const box =
+      document.getElementById("floatingInquiryBox");
+
+    const content =
+      document.getElementById("floatingInquiryContent");
+
+    const arrow =
+      document.getElementById("floatingInquiryArrow");
+
+    if (box && content) {
+      box.classList.add("open");
+      content.style.display = "block";
+
+      if (arrow) {
+        arrow.textContent = "▲";
+      }
+    }
+  }
+
   return true;
+
 }
 
 function removeInquiry(index) {
@@ -6414,6 +6453,60 @@ function toggleFloatingInquiry() {
 
 }
 
+// 無產品、未填資料時，點擊外面自動收合
+document.addEventListener("click", function(event) {
+  const box =
+    document.getElementById("floatingInquiryBox");
+
+  if (
+    !box ||
+    !box.classList.contains("open") ||
+    box.contains(event.target)
+  ) {
+    return;
+  }
+
+  // 有產品時，保持展開
+  if (
+    Array.isArray(inquiryCart) &&
+    inquiryCart.length > 0
+  ) {
+    return;
+  }
+
+  // 已填留言或聯絡資料時，保持展開
+  const fieldIds = [
+    "floatingInquiryMessage",
+    "floatingCompany",
+    "floatingContact",
+    "floatingEmail",
+    "floatingTel"
+  ];
+
+  const hasInput = fieldIds.some(function(id) {
+    const field = document.getElementById(id);
+    return field && field.value.trim() !== "";
+  });
+
+  const privacy =
+    document.getElementById("floatingAgreePrivacy");
+
+  if (hasInput || (privacy && privacy.checked)) {
+    return;
+  }
+
+  box.classList.remove("open");
+
+  const content =
+    document.getElementById("floatingInquiryContent");
+
+  const arrow =
+    document.getElementById("floatingInquiryArrow");
+
+  if (content) content.style.display = "none";
+  if (arrow) arrow.textContent = "▼";
+});
+
 // =====================================================
 // 清除全部 INQUIRY 產品與 Message
 // =====================================================
@@ -6451,7 +6544,25 @@ function updateFloatingInquiryCount() {
   const items =
     Array.isArray(inquiryCart) ? inquiryCart : [];
 
+    // 從 0 項變成 1 項時，自動展開 Inquiry
+const previousCount = Number(count.textContent) || 0;
+
+const inquiryBox =
+  document.getElementById("floatingInquiryBox");
+
+if (
+  previousCount === 0 &&
+  items.length === 1 &&
+  inquiryBox &&
+  !inquiryBox.classList.contains("open")
+) {
+  toggleFloatingInquiry();
+}
+
   count.textContent = items.length;
+
+  count.style.display =
+  items.length > 0 ? "inline-flex" : "none";
 
 
   // 有 INQUIRY 產品時，CLEAR ALL 變橘色
