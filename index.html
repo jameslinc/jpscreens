@@ -1384,6 +1384,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <button
     type="button"
     id="floatingClearAll"
+    data-lang="floating_rfq_clear_all"
     onclick="event.stopPropagation();clearFloatingInquiryAll();"
     style="
       width:auto;
@@ -1401,7 +1402,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     CLEAR ALL
   </button>
 
- 🛒 INQUIRY
+ 🛒 <span data-lang="floating_rfq_title">INQUIRY</span>
 <span
   id="floatingInquiryCount"
   style="
@@ -1475,8 +1476,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      style="margin-top:12px;display:grid;gap:7px;">
 
   <div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
-    <label for="floatingCompany">Company *</label>
-    <input id="floatingCompany" type="text" placeholder="Company">
+
+  <label for="floatingCompany">
+  <span data-lang="rfq_company_label">Company</span> *
+</label>
+<input
+  id="floatingCompany"
+  type="text"
+  placeholder="Company"
+  data-lang-placeholder="rfq_company_placeholder"
+>
+
+
   </div>
 
   <div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
