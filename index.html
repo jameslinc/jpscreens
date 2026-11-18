@@ -1287,6 +1287,10 @@ body {
 
 #floatingInquiryBox.open {
   width: 360px;
+  top: var(--inquiry-open-top, 115px);
+  max-height: calc(100vh - var(--inquiry-open-top, 115px) - 12px);
+  max-height: calc(100dvh - var(--inquiry-open-top, 115px) - 12px);
+  overflow-y: auto;
 }
 
 /* 手機版 */
@@ -1421,7 +1425,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <span
     id="floatingInquiryArrow"
     style="margin-left:auto;"
-  >▼</span>
+  >Expand ▼</span>
 </div>
 
   <div
@@ -5918,7 +5922,7 @@ function addInquiry(item) {
       content.style.display = "block";
 
       if (arrow) {
-        arrow.textContent = "▲";
+        arrow.textContent = "Collapse ▲";
       }
     }
   }
@@ -6430,6 +6434,33 @@ s0.parentNode.insertBefore(s1,s0);
 
 <script>
 
+function positionFloatingInquiry() {
+  const box = document.getElementById("floatingInquiryBox");
+
+  if (!box || !box.classList.contains("open")) return;
+
+  const contact = document.querySelector(
+    '#topbarBox a.jps-menu-contact[href="#rfq"]'
+  );
+
+  if (!contact || !contact.getClientRects().length) {
+    box.style.removeProperty("--inquiry-open-top");
+    return;
+  }
+
+  const top = Math.max(12, Math.ceil(contact.getBoundingClientRect().bottom) + 6);
+  box.style.setProperty("--inquiry-open-top", `${top}px`);
+}
+
+window.addEventListener("resize", positionFloatingInquiry);
+window.addEventListener("scroll", positionFloatingInquiry, { passive: true });
+
+const inquiryTopbar = document.getElementById("topbarBox");
+
+if (inquiryTopbar) {
+  new ResizeObserver(positionFloatingInquiry).observe(inquiryTopbar);
+}
+
 // 展開 / 收合浮動 INQUIRY
 function toggleFloatingInquiry() {
 
@@ -6448,10 +6479,14 @@ function toggleFloatingInquiry() {
   content.style.display =
     isOpen ? "block" : "none";
 
-  arrow.textContent =
-    isOpen ? "▲" : "▼";
+   arrow.textContent =
+    isOpen ? "Collapse ▲" : "Expand ▼";
+
+      if (isOpen) positionFloatingInquiry();
 
 }
+
+
 
 // 無產品、未填資料時，點擊外面自動收合
 document.addEventListener("click", function(event) {
@@ -6504,7 +6539,7 @@ document.addEventListener("click", function(event) {
     document.getElementById("floatingInquiryArrow");
 
   if (content) content.style.display = "none";
-  if (arrow) arrow.textContent = "▼";
+  if (arrow) arrow.textContent = "Expand ▼";
 });
 
 // =====================================================
