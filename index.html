@@ -1425,6 +1425,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <span
     id="floatingInquiryArrow"
+     data-lang="floating_rfq_expand"
     style="margin-left:auto;"
   >Expand ▼</span>
 </div>
@@ -1434,7 +1435,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     style="display:none;padding:14px;"
   >
     <div id="floatingInquiryList">
-      No RFQ items selected.
+      <span data-lang="floating_rfq_empty">No RFQ items selected.</span>
     </div>
 
   
@@ -1444,6 +1445,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <label
     for="floatingInquiryMessage"
+    data-lang="float_rfq_message_label"
     style="
       display:block;
       margin-bottom:6px;
@@ -1456,6 +1458,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <textarea
     id="floatingInquiryMessage"
+     data-lang-placeholder="float_your_rfq_message_label"
     placeholder="Your message..."
     style="
       width:100%;
@@ -1489,21 +1492,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 
   </div>
+<div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
+  <label for="floatingContact">
+    <span data-lang="float_rfq_contact_label">Contact</span> *
+  </label>
+  <input
+    id="floatingContact"
+    type="text"
+    placeholder="Contact Person"
+    data-lang-placeholder="float_rfq_contact_placeholder"
+  >
+</div>
 
-  <div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
-    <label for="floatingContact">Contact *</label>
-    <input id="floatingContact" type="text" placeholder="Contact Person">
-  </div>
+<div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
+  <label for="floatingEmail">
+    <span data-lang="rfq_email_label">Email</span> *
+  </label>
+  <input
+    id="floatingEmail"
+    type="email"
+    placeholder="Email"
+    data-lang-placeholder="float_rfq_email_placeholder"
+  >
+</div>
 
-  <div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
-    <label for="floatingEmail">Email *</label>
-    <input id="floatingEmail" type="email" placeholder="Email">
-  </div>
-
-  <div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
-    <label for="floatingTel">Phone</label>
-    <input id="floatingTel" type="tel" placeholder="Phone">
-  </div>
+<div style="display:grid;grid-template-columns:95px minmax(0,1fr);align-items:center;gap:8px;">
+  <label for="floatingTel" data-lang="rfq_tel_label">Phone</label>
+  <input
+    id="floatingTel"
+    type="tel"
+    placeholder="Phone"
+    data-lang-placeholder="float_rfq_tel_placeholder"
+  >
+</div>
 
 </div>
 
@@ -1520,14 +1541,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <input
       type="checkbox"
       id="floatingAgreePrivacy"
+       
       style="width:auto;margin:0;"
     >
 
     <a href="#privacy"
-       style="color:#197ac2;text-decoration:underline;">
-      Privacy Policy
+       style="color:#197ac2;text-decoration:underline;" data-lang="floating_rfq_privacy_link">
+       
+      Privacy Policy  
     </a>
-    に同意します
+      に同意します
   </label>
 
   <button
@@ -5933,7 +5956,8 @@ function addInquiry(item) {
       content.style.display = "block";
 
       if (arrow) {
-        arrow.textContent = "Collapse ▲";
+        arrow.dataset.lang = "floating_rfq_collapse";
+       arrow.textContent = langText("floating_rfq_collapse", "Collapse ▲");
       }
     }
   }
@@ -6491,7 +6515,14 @@ function toggleFloatingInquiry() {
     isOpen ? "block" : "none";
 
    arrow.textContent =
-    isOpen ? "Collapse ▲" : "Expand ▼";
+    arrow.dataset.lang = isOpen
+  ? "floating_rfq_collapse"
+  : "floating_rfq_expand";
+
+arrow.textContent = langText(
+  arrow.dataset.lang,
+  isOpen ? "Collapse ▲" : "Expand ▼"
+);
 
       if (isOpen) positionFloatingInquiry();
 
@@ -6550,7 +6581,10 @@ document.addEventListener("click", function(event) {
     document.getElementById("floatingInquiryArrow");
 
   if (content) content.style.display = "none";
-  if (arrow) arrow.textContent = "Expand ▼";
+  if (arrow) {
+  arrow.dataset.lang = "floating_rfq_expand";
+  arrow.textContent = langText("floating_rfq_expand", "Expand ▼");
+}
 });
 
 // =====================================================
@@ -6621,7 +6655,16 @@ if (clearBtn) {
 }
 
   if (items.length === 0) {
-    list.textContent = "No RFQ items selected.";
+    
+const emptyMessage = document.createElement("span");
+emptyMessage.dataset.lang = "floating_rfq_empty";
+emptyMessage.textContent = langText(
+  "floating_rfq_empty",
+  "No RFQ items selected."
+);
+list.replaceChildren(emptyMessage);
+
+
     return;
   }
 
